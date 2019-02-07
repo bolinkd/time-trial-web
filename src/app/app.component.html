@@ -25,7 +25,7 @@
                [cdkDropListConnectedTo]="getLists()"
                [cdkDropListEnterPredicate]="canAddToBoaty(boaty.start)"
                (cdkDropListDropped)="drop($event, boaty, 'start')">
-            <div *ngFor="let snapshot of boaty.start" class="snapshot example-box">
+            <div *ngFor="let snapshot of boaty.start" class="snapshot example-box" cdkDrag>
               <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
               {{ formatDuration(snapshot) }}
               <span *ngIf="boaty?.start[0]" (click)="removeStart(boaty); $event.stopPropagation()" class="delete"> > </span>
@@ -47,7 +47,7 @@
                [cdkDropListConnectedTo]="getLists()"
                [cdkDropListEnterPredicate]="canAddToBoaty(boaty.end)"
                (cdkDropListDropped)="drop($event, boaty, 'end')">
-            <div *ngFor="let snapshot of boaty.end" class="snapshot example-box">
+            <div *ngFor="let snapshot of boaty.end" class="snapshot example-box" cdkDrag>
               <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
               {{ formatDuration(snapshot) }}
               <span *ngIf="boaty?.end[0]" (click)="removeEnd(boaty); $event.stopPropagation()" class="delete"> > </span>
