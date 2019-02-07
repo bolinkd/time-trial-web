@@ -16,7 +16,7 @@
             Start:
           </div>
 
-          <div class="example-list"
+          <div class="example-list no-scroll"
                #lists="cdkDropList"
                fxLayout="column"
                fxFlex="1 1 auto"
@@ -38,7 +38,7 @@
             End:
           </div>
 
-          <div class="example-list"
+          <div class="example-list no-scroll"
                #lists="cdkDropList"
                fxLayout="column"
                fxFlex="1 1 auto"
@@ -60,10 +60,10 @@
             Time:
           </div>
 
-          <div class="example-list"
+          <div class="example-list no-scroll"
                fxLayout="column"
                fxFlex="1 1 auto">
-            <div class="snapshot example-box" cdkDrag>
+            <div class="snapshot example-box">
               {{ formatDuration(boaty?.time) }}
             </div>
           </div>

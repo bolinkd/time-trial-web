@@ -18,7 +18,7 @@
 }
 
 .boats-container > .boats-list {
-  overflow: scroll;
+  overflow: hidden;
 }
 .boats-container > .boats-list > .boat {
   border: 1px solid;
@@ -49,7 +49,10 @@
   display: block;
   background: white;
   border-radius: 4px;
-  overflow: scroll;
+  overflow-y: scroll;
+}
+.example-list.no-scroll {
+  overflow: hidden;
 }
 
 .example-box {
