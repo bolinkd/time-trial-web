@@ -6,83 +6,85 @@
   <button mat-button [disabled]="!timer" (click)="takeSnapshot()">Lap</button>
 </div>
 
-<div fxFlex="1 1 auto" fxLayout="row" class="boats-container">
-  <div fxLayout="column" fxFlex="1 1 auto" fxLayoutAlign="space-evenly" class="boats-list">
-    <mat-card class="boat" *ngFor="let boaty of currentBoatys">
-      <div>#{{ boaty.bow_marker }}: {{ boaty.name }}</div>
-      <mat-card-content>
-        <div fxLayout="row">
-          <div fxLayout="column" class="drop-list-label">
-            Start:
-          </div>
+<mat-card fxLayout="column" fxFlex="1 1 auto">
+  <div fxFlex="1 1 auto" fxLayout="row" class="boats-container">
+    <div fxLayout="column" fxFlex="1 1 auto" fxLayoutAlign="space-evenly" class="boats-list">
+      <mat-card class="boat" *ngFor="let boaty of currentBoatys">
+        <div>#{{ boaty.bow_marker }}: {{ boaty.name }}</div>
+        <mat-card-content>
+          <div fxLayout="row">
+            <div fxLayout="column" class="drop-list-label">
+              Start:
+            </div>
 
-          <div class="example-list no-scroll"
-               #lists="cdkDropList"
-               fxLayout="column"
-               fxFlex="1 1 auto"
-               cdkDropList
-               [cdkDropListData]="boaty.start"
-               [cdkDropListConnectedTo]="getLists()"
-               [cdkDropListEnterPredicate]="canAddToBoaty(boaty.start)"
-               (cdkDropListDropped)="drop($event, boaty, 'start')">
-            <div *ngFor="let snapshot of boaty.start" class="snapshot example-box" cdkDrag>
-              <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
-              {{ formatDuration(snapshot) }}
-              <span *ngIf="boaty?.start[0]" (click)="removeStart(boaty); $event.stopPropagation()" class="delete"> > </span>
+            <div class="example-list no-scroll"
+                 #lists="cdkDropList"
+                 fxLayout="column"
+                 fxFlex="1 1 auto"
+                 cdkDropList
+                 [cdkDropListData]="boaty.start"
+                 [cdkDropListConnectedTo]="getLists()"
+                 [cdkDropListEnterPredicate]="canAddToBoaty(boaty.start)"
+                 (cdkDropListDropped)="drop($event, boaty, 'start')">
+              <div *ngFor="let snapshot of boaty.start" class="snapshot example-box" cdkDrag>
+                <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+                {{ formatDuration(snapshot) }}
+                <span *ngIf="boaty?.start[0]" (click)="removeStart(boaty); $event.stopPropagation()" class="delete"> > </span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div fxLayout="row">
-          <div fxLayout="column" class="drop-list-label">
-            End:
-          </div>
+          <div fxLayout="row">
+            <div fxLayout="column" class="drop-list-label">
+              End:
+            </div>
 
-          <div class="example-list no-scroll"
-               #lists="cdkDropList"
-               fxLayout="column"
-               fxFlex="1 1 auto"
-               cdkDropList
-               [cdkDropListData]="boaty.end"
-               [cdkDropListConnectedTo]="getLists()"
-               [cdkDropListEnterPredicate]="canAddToBoaty(boaty.end)"
-               (cdkDropListDropped)="drop($event, boaty, 'end')">
-            <div *ngFor="let snapshot of boaty.end" class="snapshot example-box" cdkDrag>
-              <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
-              {{ formatDuration(snapshot) }}
-              <span *ngIf="boaty?.end[0]" (click)="removeEnd(boaty); $event.stopPropagation()" class="delete"> > </span>
+            <div class="example-list no-scroll"
+                 #lists="cdkDropList"
+                 fxLayout="column"
+                 fxFlex="1 1 auto"
+                 cdkDropList
+                 [cdkDropListData]="boaty.end"
+                 [cdkDropListConnectedTo]="getLists()"
+                 [cdkDropListEnterPredicate]="canAddToBoaty(boaty.end)"
+                 (cdkDropListDropped)="drop($event, boaty, 'end')">
+              <div *ngFor="let snapshot of boaty.end" class="snapshot example-box" cdkDrag>
+                <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+                {{ formatDuration(snapshot) }}
+                <span *ngIf="boaty?.end[0]" (click)="removeEnd(boaty); $event.stopPropagation()" class="delete"> > </span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div fxLayout="row">
-          <div fxLayout="column" class="drop-list-label">
-            Time:
-          </div>
+          <div fxLayout="row">
+            <div fxLayout="column" class="drop-list-label">
+              Time:
+            </div>
 
-          <div class="example-list no-scroll"
-               fxLayout="column"
-               fxFlex="1 1 auto">
-            <div class="snapshot example-box">
-              {{ formatDuration(boaty?.time) }}
+            <div class="example-list no-scroll"
+                 fxLayout="column"
+                 fxFlex="1 1 auto">
+              <div class="snapshot example-box">
+                {{ formatDuration(boaty?.time) }}
+              </div>
             </div>
           </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-</div>
-<div fxLayout="row" fxLayoutAlign="space-between">
-  <button mat-button [disabled]="currPage == 0" (click)="prevPage()">Prev</button>
-  <div class="dot-container">
-    <div *ngFor="let page of boatyPages; let idx = index"
-         class="dot"
-         (click)="setPage(idx)"
-         [ngClass]="{ 'selected': idx == currPage }">
+        </mat-card-content>
+      </mat-card>
     </div>
   </div>
-  <button mat-button [disabled]="currPage == boatyPages.length - 1" (click)="nextPage()">Next</button>
-</div>
+  <div fxLayout="row" fxLayoutAlign="space-between">
+    <button mat-button [disabled]="currPage == 0" (click)="prevPage()">Prev</button>
+    <div class="dot-container">
+      <div *ngFor="let page of boatyPages; let idx = index"
+           class="dot"
+           (click)="setPage(idx)"
+           [ngClass]="{ 'selected': idx == currPage }">
+      </div>
+    </div>
+    <button mat-button [disabled]="currPage == boatyPages.length - 1" (click)="nextPage()">Next</button>
+  </div>
+</mat-card>
 <div fxFlex="0 1 120px" fxLayout="row" class="snapshots">
   <div class="example-list" #lists="cdkDropList"
        [cdkDropListData]="snapshots"

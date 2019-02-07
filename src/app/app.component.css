@@ -27,6 +27,9 @@
   background: lightgrey;
 }
 
+.snapshots {
+  margin-top: 5px;
+}
 .snapshots > .snapshot.used {
   text-decoration: line-through;
   cursor: default;
