@@ -1,21 +1,100 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
+<div fxLayout="row" fxLayoutAlign="space-between">
+  <button mat-button (click)="toggleTimerState()">{{ toggleTimerDescription() }}</button>
+  <div class="timer">
+    {{ formatDuration(elapsed_time) }}
+  </div>
+  <button mat-button [disabled]="!timer" (click)="takeSnapshot()">Lap</button>
 </div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/cli">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
 
-<router-outlet></router-outlet>
+<div fxFlex="1 1 auto" fxLayout="row" class="boats-container">
+  <div fxLayout="column" fxFlex="1 1 auto" fxLayoutAlign="space-evenly" class="boats-list">
+    <mat-card class="boat" *ngFor="let boaty of currentBoatys">
+      <div>#{{ boaty.bow_marker }}: {{ boaty.name }}</div>
+      <mat-card-content>
+        <div fxLayout="row">
+          <div fxLayout="column" class="drop-list-label">
+            Start:
+          </div>
+
+          <div class="example-list"
+               #lists="cdkDropList"
+               fxLayout="column"
+               fxFlex="1 1 auto"
+               cdkDropList
+               [cdkDropListData]="boaty.start"
+               [cdkDropListConnectedTo]="getLists()"
+               [cdkDropListEnterPredicate]="canAddToBoaty(boaty.start)"
+               (cdkDropListDropped)="drop($event, boaty, 'start')">
+            <div *ngFor="let snapshot of boaty.start" class="snapshot example-box">
+              <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+              {{ formatDuration(snapshot) }}
+              <span *ngIf="boaty?.start[0]" (click)="removeStart(boaty); $event.stopPropagation()" class="delete"> > </span>
+            </div>
+          </div>
+        </div>
+
+        <div fxLayout="row">
+          <div fxLayout="column" class="drop-list-label">
+            End:
+          </div>
+
+          <div class="example-list"
+               #lists="cdkDropList"
+               fxLayout="column"
+               fxFlex="1 1 auto"
+               cdkDropList
+               [cdkDropListData]="boaty.end"
+               [cdkDropListConnectedTo]="getLists()"
+               [cdkDropListEnterPredicate]="canAddToBoaty(boaty.end)"
+               (cdkDropListDropped)="drop($event, boaty, 'end')">
+            <div *ngFor="let snapshot of boaty.end" class="snapshot example-box">
+              <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+              {{ formatDuration(snapshot) }}
+              <span *ngIf="boaty?.end[0]" (click)="removeEnd(boaty); $event.stopPropagation()" class="delete"> > </span>
+            </div>
+          </div>
+        </div>
+
+        <div fxLayout="row">
+          <div fxLayout="column" class="drop-list-label">
+            Time:
+          </div>
+
+          <div class="example-list"
+               fxLayout="column"
+               fxFlex="1 1 auto">
+            <div class="snapshot example-box" cdkDrag>
+              {{ formatDuration(boaty?.time) }}
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+<div fxLayout="row" fxLayoutAlign="space-between">
+  <button mat-button [disabled]="currPage == 0" (click)="prevPage()">Prev</button>
+  <div class="dot-container">
+    <div *ngFor="let page of boatyPages; let idx = index"
+         class="dot"
+         (click)="setPage(idx)"
+         [ngClass]="{ 'selected': idx == currPage }">
+    </div>
+  </div>
+  <button mat-button [disabled]="currPage == boatyPages.length - 1" (click)="nextPage()">Next</button>
+</div>
+<div fxFlex="0 1 120px" fxLayout="row" class="snapshots">
+  <div class="example-list" #lists="cdkDropList"
+       [cdkDropListData]="snapshots"
+       fxFlex="0 1 100%"
+       [cdkDropListEnterPredicate]="alwaysFalse"
+       [cdkDropListConnectedTo]="getLists()"
+       cdkDropList>
+    <div *ngFor="let snapshot of snapshots" class="snapshot example-box" cdkDrag>
+      <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+      {{ formatDuration(snapshot) }}
+      <span (click)="removeSnapshot(snapshot); $event.stopPropagation()" class="delete">x</span>
+    </div>
+  </div>
+</div>
+

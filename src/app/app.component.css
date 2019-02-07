@@ -9,7 +9,7 @@
   padding: 10px;
 }
 
-.clickable {
+.clickable, .delete {
   cursor: pointer;
 }
 
@@ -17,35 +17,25 @@
   margin: auto;
 }
 
-.boats-container {
-  & > .boats-list {
-    overflow: scroll;
-
-    & > .boat {
-      border: 1px solid;
-
-      &.selected {
-        background: lightgrey;
-      }
-    }
-  }
+.boats-container > .boats-list {
+  overflow: scroll;
+}
+.boats-container > .boats-list > .boat {
+  border: 1px solid;
+}
+.boats-container > .boats-list > .boat.selected {
+  background: lightgrey;
 }
 
-.snapshots {
-  & > .snapshot {
-    &.used {
-      text-decoration: line-through;
-      cursor: default;
-    }
-
-    &.selected {
-      background: lightgrey;
-    }
-  }
+.snapshots > .snapshot.used {
+  text-decoration: line-through;
+  cursor: default;
+}
+.snapshots > .snapshot.selected {
+  background: lightgrey;
 }
 
 .delete {
-  @extend .clickable;
   padding: 1px;
   margin: 1px;
   color: red;
@@ -79,9 +69,7 @@
 .cdk-drag-preview {
   box-sizing: border-box;
   border-radius: 4px;
-  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-  0 8px 10px 1px rgba(0, 0, 0, 0.14),
-  0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
 }
 
 .cdk-drag-animating {
@@ -103,16 +91,16 @@
 .dot-container {
   display: flex;
   margin: auto;
-
-  & > .dot {
-    border: 1px solid;
-    height: 8px;
-    width: 8px;
-    border-radius: 100%;
-    margin: 3px;
-
-    &.selected {
-      background: black;
-    }
-  }
 }
+.dot-container > .dot {
+  border: 1px solid;
+  height: 8px;
+  width: 8px;
+  border-radius: 100%;
+  margin: 3px;
+}
+.dot-container > .dot.selected {
+  background: black;
+}
+
+/*# sourceMappingURL=app.component.css.map */
