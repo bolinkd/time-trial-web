@@ -3,10 +3,13 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import {DragDropModule} from '@angular/cdk/drag-drop';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import {MatButtonModule, MatCardModule} from '@angular/material';
-import {ObserversModule} from '@angular/cdk/observers';
+import {MatToolbarModule} from '@angular/material';
+import { StoreModule } from '@ngrx/store';
+import { reducers, metaReducers } from './reducers';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -15,11 +18,11 @@ import {ObserversModule} from '@angular/cdk/observers';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    DragDropModule,
     FlexLayoutModule,
-    MatButtonModule,
-    MatCardModule,
-    ObserversModule
+    MatToolbarModule,
+    StoreModule.forRoot(reducers, { metaReducers }),
+    StoreRouterConnectingModule.forRoot(),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production })
   ],
   providers: [],
   bootstrap: [AppComponent]

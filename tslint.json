@@ -45,6 +45,11 @@
       true,
       "ignore-params"
     ],
+    "variable-name":  [
+      true,
+      "allow-snake-case",
+      "allow-leading-underscore"
+    ],
     "no-non-null-assertion": true,
     "no-redundant-jsdoc": true,
     "no-switch-case-fall-through": true,

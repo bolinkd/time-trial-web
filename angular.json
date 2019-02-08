@@ -136,5 +136,8 @@
       }
     }
   },
-  "defaultProject": "time-trial"
+  "defaultProject": "time-trial",
+  "cli": {
+    "defaultCollection": "@ngrx/schematics"
+  }
 }
