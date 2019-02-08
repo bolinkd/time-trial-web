@@ -18,8 +18,8 @@ export const reducers: ActionReducerMap<State> = {
 
 export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
   return (state, action) => {
-    console.log('action', action);
-    console.log('state', state);
+    // console.log('action', action);
+    // console.log('state', state);
     return reducer(state, action);
   };
 }

@@ -27,6 +27,11 @@ enum TimeState {
   'stopped'
 }
 
+enum BoatTime {
+  'start' = 0,
+  'end'
+}
+
 @Component({
   selector: 'app-time-trial',
   templateUrl: './time-trial.component.html',
@@ -40,6 +45,9 @@ export class TimeTrialComponent implements OnInit, AfterViewInit {
   @ViewChild('scrollUpButton') scroll_up_button: ElementRef;
   @ViewChild('scrollDownButton') scroll_down_button: ElementRef;
 
+  BoatTime = BoatTime;
+  TimeState = TimeState;
+
   start_time: Moment = null;
   curr_time: Moment = null;
   elapsed_time: Snapshot = null;
@@ -49,6 +57,10 @@ export class TimeTrialComponent implements OnInit, AfterViewInit {
   scroll_up_interval = null;
 
   timer: any = null;
+
+  dragged_snapshot_boat: Boat = null;
+  dragged_snapshot_boat_time: BoatTime = null;
+  dragged_snapshot: number = null;
 
   current_boats$: Observable<Boat[]>;
   boat_page_count$: Observable<number>;
@@ -203,9 +215,19 @@ export class TimeTrialComponent implements OnInit, AfterViewInit {
     this._store.dispatch(new UpdateBoat({ boat: { id: boaty.id, changes: boaty }}));
   }
 
-  drop(event: CdkDragDrop<number[]>, boaty: Boat, location: 'start' | 'end') {
+  dragStartSnapshot(snapshot: number, boat: Boat = null, boat_time: BoatTime = null) {
+    this.dragged_snapshot = snapshot;
+    this.dragged_snapshot_boat = boat;
+    this.dragged_snapshot_boat_time = boat_time;
+  }
+
+  drop(event: CdkDragDrop<number[]>, boaty: Boat, location: BoatTime) {
+    if (event.previousContainer === event.container) {
+      return;
+    }
+
     const snapshot = event.previousContainer.data[event.previousIndex];
-    if (location === 'start') {
+    if (location === BoatTime.start) {
       if (boaty.end != null && boaty.end < snapshot) {
         console.log('ERROR');
         return;
@@ -214,7 +236,7 @@ export class TimeTrialComponent implements OnInit, AfterViewInit {
       this._store.dispatch(new UpdateBoat({ boat: { id: boaty.id, changes: boaty }}));
       this._store.dispatch(new DeleteSnapshot({ snapshot }));
 
-    } else if (location === 'end') {
+    } else if (location === BoatTime.end) {
       if (boaty.start != null && boaty.start > snapshot) {
         console.log('ERROR');
         return;
@@ -222,6 +244,20 @@ export class TimeTrialComponent implements OnInit, AfterViewInit {
       boaty.end = snapshot;
       this._store.dispatch(new UpdateBoat({ boat: { id: boaty.id, changes: boaty }}));
       this._store.dispatch(new DeleteSnapshot({ snapshot }));
+    }
+
+    if (this.dragged_snapshot_boat != null) {
+      switch (this.dragged_snapshot_boat_time) {
+        case BoatTime.start: {
+          this.dragged_snapshot_boat.start = null;
+          break;
+        }
+        case BoatTime.end: {
+          this.dragged_snapshot_boat.end = null;
+          break;
+        }
+      }
+      this._store.dispatch(new UpdateBoat({ boat: { id: this.dragged_snapshot_boat.id, changes: this.dragged_snapshot_boat }}));
     }
 
     if (boaty != null) {

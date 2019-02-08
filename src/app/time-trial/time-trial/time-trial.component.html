@@ -9,8 +9,8 @@
 <mat-card fxLayout="column" fxFlex="1 1 auto" *ngLet="snapshots$ | async; let snapshots">
   <div fxFlex="1 1 auto" fxLayout="row" class="boats-container" #boatsContainer>
     <div fxLayout="column" fxFlex="1 1 auto" fxLayoutAlign="space-evenly" class="boats-list">
-      <mat-card class="boat" *ngFor="let boaty of (current_boats$ | async)">
-        <div>#{{ boaty.bow_marker }}: {{ boaty.name }}</div>
+      <mat-card class="boat" *ngFor="let boat of (current_boats$ | async)">
+        <div>#{{ boat.bow_marker }}: {{ boat.name }}</div>
         <mat-card-content>
           <div fxLayout="row">
             <div fxLayout="column" class="drop-list-label">
@@ -22,14 +22,17 @@
                  fxLayout="column"
                  fxFlex="1 1 auto"
                  cdkDropList
-                 [cdkDropListData]="[boaty.start]"
+                 [cdkDropListData]="[boat.start]"
                  [cdkDropListConnectedTo]="getLists()"
-                 [cdkDropListEnterPredicate]="canAddToBoaty(boaty.start)"
-                 (cdkDropListDropped)="drop($event, boaty, 'start')">
-              <div *ngIf="boaty.start != null" class="snapshot example-box" cdkDrag>
+                 [cdkDropListEnterPredicate]="canAddToBoaty(boat.start)"
+                 (cdkDropListDropped)="drop($event, boat, BoatTime.start)">
+              <div *ngIf="boat.start != null"
+                   class="snapshot example-box"
+                   (cdkDragStarted)="dragStartSnapshot(boat.start, boat, BoatTime.start)"
+                   cdkDrag>
                 <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
-                {{ formatSnapshot(boaty.start) }}
-                <span *ngIf="boaty?.start != null" (click)="removeStart(boaty, snapshots); $event.stopPropagation()" class="delete"> > </span>
+                {{ formatSnapshot(boat.start) }}
+                <span *ngIf="boat?.start != null" (click)="removeStart(boat, snapshots); $event.stopPropagation()" class="delete"> > </span>
               </div>
             </div>
           </div>
@@ -44,14 +47,17 @@
                  fxLayout="column"
                  fxFlex="1 1 auto"
                  cdkDropList
-                 [cdkDropListData]="[boaty.end]"
+                 [cdkDropListData]="[boat.end]"
                  [cdkDropListConnectedTo]="getLists()"
-                 [cdkDropListEnterPredicate]="canAddToBoaty(boaty.end)"
-                 (cdkDropListDropped)="drop($event, boaty, 'end')">
-              <div *ngIf="boaty.end != null" class="snapshot example-box" cdkDrag>
+                 [cdkDropListEnterPredicate]="canAddToBoaty(boat.end)"
+                 (cdkDropListDropped)="drop($event, boat, BoatTime.end)">
+              <div *ngIf="boat.end != null"
+                   class="snapshot example-box"
+                   (cdkDragStarted)="dragStartSnapshot(boat.end, boat, BoatTime.end)"
+                   cdkDrag>
                 <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
-                {{ formatSnapshot(boaty?.end) }}
-                <span *ngIf="boaty?.end != null" (click)="removeEnd(boaty, snapshots); $event.stopPropagation()" class="delete"> > </span>
+                {{ formatSnapshot(boat?.end) }}
+                <span *ngIf="boat?.end != null" (click)="removeEnd(boat, snapshots); $event.stopPropagation()" class="delete"> > </span>
               </div>
             </div>
           </div>
@@ -65,7 +71,7 @@
                  fxLayout="column"
                  fxFlex="1 1 auto">
               <div class="snapshot example-box">
-                {{ formatSnapshot(boaty?.time) }}
+                {{ formatSnapshot(boat?.time) }}
               </div>
             </div>
           </div>
@@ -103,7 +109,10 @@
        [cdkDropListEnterPredicate]="alwaysFalse"
        [cdkDropListConnectedTo]="getLists()"
        cdkDropList>
-    <div *ngFor="let snapshot of snapshots" class="snapshot example-box" cdkDrag>
+    <div *ngFor="let snapshot of snapshots"
+         class="snapshot example-box"
+         cdkDrag
+         (cdkDragStarted)="dragStartSnapshot(snapshot)">
       <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
       {{ formatSnapshot(snapshot) }}
       <span (click)="removeSnapshot(snapshot); $event.stopPropagation()" class="delete">x</span>
