@@ -242,6 +242,7 @@ export class TimeTrialComponent implements OnInit, AfterViewInit {
           break;
         }
       }
+      this.dragged_snapshot_boat.time = null;
       this._store.dispatch(new UpdateBoat({ boat: { id: this.dragged_snapshot_boat.id, changes: this.dragged_snapshot_boat }}));
     }
 
