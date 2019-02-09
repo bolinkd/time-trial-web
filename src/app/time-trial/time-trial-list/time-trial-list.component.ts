@@ -13,7 +13,7 @@ import {selectAllTimeTrials} from '../reducers/time-trial.reducer';
 })
 export class TimeTrialListComponent implements OnInit {
 
-  private time_trials$: Observable<TimeTrial[]>;
+  time_trials$: Observable<TimeTrial[]>;
   private initial_time_trials = [
     new TimeTrial(moment().startOf('day'), 2.5),
     new TimeTrial(moment().subtract(1, 'day').startOf('day'), 2.5),
