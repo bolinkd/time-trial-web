@@ -3,6 +3,7 @@
   display: flex;
   flex-direction: column;
   padding: 10px 10px 0 10px;
+  background: lightgrey;
 }
 
 .mat-card {
@@ -17,22 +18,28 @@
   margin: auto;
 }
 
-.boats-container {
-  & > .boats-list {
-    overflow: hidden;
+.boat-info-container {
+  border: 1px solid;
+  & > .boats-container {
+    & > .boats-list {
+      overflow: hidden;
 
-    & > .boat {
-      border: 1px solid;
+      & > .boat {
+        border: 1px solid;
 
-      &.selected {
-        background: lightgrey;
+        &.selected {
+          background: lightgrey;
+        }
       }
     }
   }
 }
 
+
 .snapshots {
   margin-top: 5px;
+  border: 1px solid;
+
   & > .snapshot {
     &.used {
       text-decoration: line-through;
@@ -42,6 +49,11 @@
     &.selected {
       background: lightgrey;
     }
+  }
+
+  & > .arrows {
+    border-radius: 3px;
+    border: 1px solid lightgrey;
   }
 }
 

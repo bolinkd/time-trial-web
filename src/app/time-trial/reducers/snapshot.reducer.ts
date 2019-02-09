@@ -17,7 +17,7 @@ export function reducer(
   switch (action.type) {
     case SnapshotActionTypes.AddSnapshot: {
       return Object.assign({}, state, {
-        snapshots: state.snapshots.concat(action.payload.snapshot)
+        snapshots: state.snapshots.concat(action.payload.snapshot).sort((x, y) => x - y)
       });
     }
 

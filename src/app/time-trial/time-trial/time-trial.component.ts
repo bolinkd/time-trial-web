@@ -1,8 +1,9 @@
 import {
+  AfterViewChecked,
   AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component,
+  Component, DoCheck,
   ElementRef, HostListener,
   OnInit,
   QueryList,
@@ -14,18 +15,13 @@ import {CdkDrag, CdkDragDrop, CdkDropList, transferArrayItem} from '@angular/cdk
 import * as moment from 'moment';
 import {Boat} from '../models/boat.model';
 import {select, Store} from '@ngrx/store';
-import {AddBoats, ClearBoats, SetCurrentPage, SetPageSize, UpdateBoat} from '../actions/boat.actions';
+import {AddBoats, ClearBoats, SetCurrentPage, SetPageSize, UpdateBoat, UpdateBoats} from '../actions/boat.actions';
 import {Observable} from 'rxjs';
 import {selectBoatPageCount, selectCurrentBoats, selectCurrentPage} from '../reducers/boat.reducer';
 import {AddSnapshot, ClearSnapshots, DeleteSnapshot, LoadSnapshots} from '../actions/snapshot.actions';
 import {Snapshot} from '../models/snapshot.model';
 import {selectSnapshots} from '../reducers/snapshot.reducer';
-
-enum TimeState {
-  'reset' = 0,
-  'running',
-  'stopped'
-}
+import {TimingStatus} from '../models/time-trial.model';
 
 enum BoatTime {
   'start' = 0,
@@ -46,12 +42,12 @@ export class TimeTrialComponent implements OnInit, AfterViewInit {
   @ViewChild('scrollDownButton') scroll_down_button: ElementRef;
 
   BoatTime = BoatTime;
-  TimeState = TimeState;
+  TimingStatus = TimingStatus;
 
   start_time: Moment = null;
   curr_time: Moment = null;
   elapsed_time: Snapshot = null;
-  time_state: TimeState = TimeState.reset;
+  time_state: TimingStatus = TimingStatus.reset;
 
   scroll_down_interval = null;
   scroll_up_interval = null;
@@ -88,8 +84,7 @@ export class TimeTrialComponent implements OnInit, AfterViewInit {
   constructor(private cdRef: ChangeDetectorRef, private _store: Store<any>) { }
 
   ngOnInit(): void {
-    this._store.dispatch(new ClearBoats());
-    this._store.dispatch(new AddBoats({ boats: this.initial_boats }));
+    this.reset();
     this.current_boats$ = this._store.pipe(select(selectCurrentBoats));
     this.boat_page_count$ = this._store.pipe(select(selectBoatPageCount));
     this.curr_page$ = this._store.pipe(select(selectCurrentPage));
@@ -102,34 +97,34 @@ export class TimeTrialComponent implements OnInit, AfterViewInit {
 
   pageResize() {
     const el = this.boats_container.nativeElement as Element;
-    const page_size = Math.max(Math.floor(el.clientHeight / 131), 1);
+    const page_size = Math.max(Math.floor(el.clientHeight / 131), 2);
     this._store.dispatch(new SetPageSize({ page_size }));
     this.cdRef.detectChanges();
   }
 
   toggleTimerState() {
-    if (this.time_state === TimeState.reset) {
+    if (this.time_state === TimingStatus.reset) {
       this.start_time = moment();
       this._store.dispatch(new AddSnapshot({ snapshot: moment.duration(0).asMilliseconds() }));
       this.updateTimer();
       this.timer = setInterval(() => this.updateTimer(), 10);
-      this.time_state = TimeState.running;
-    } else if (this.time_state === TimeState.running) {
+      this.time_state = TimingStatus.running;
+    } else if (this.time_state === TimingStatus.running) {
       clearInterval(this.timer);
       this._store.dispatch(new AddSnapshot({ snapshot: this.elapsed_time.asMilliseconds() }));
-      this.time_state = TimeState.stopped;
-    } else if (this.time_state === TimeState.stopped) {
+      this.time_state = TimingStatus.stopped;
+    } else if (this.time_state === TimingStatus.stopped) {
       this.reset();
-      this.time_state = TimeState.reset;
+      this.time_state = TimingStatus.reset;
     }
   }
 
   toggleTimerDescription() {
-    if (this.time_state === TimeState.reset) {
+    if (this.time_state === TimingStatus.reset) {
       return 'Start';
-    } else if (this.time_state === TimeState.running) {
+    } else if (this.time_state === TimingStatus.running) {
       return 'Stop';
-    } else if (this.time_state === TimeState.stopped) {
+    } else if (this.time_state === TimingStatus.stopped) {
       return 'Reset';
     }
   }
@@ -139,7 +134,9 @@ export class TimeTrialComponent implements OnInit, AfterViewInit {
     this.curr_time = null;
     this.elapsed_time = null;
     this._store.dispatch(new ClearSnapshots());
-    this.initial_boats = this.initial_boats.map(x => new Boat(x.name, x.bow_marker));
+    this._store.dispatch(new ClearBoats());
+    const boats = this.initial_boats.map(boat => new Boat(boat.name, boat.bow_marker));
+    this._store.dispatch(new AddBoats({ boats }));
     this._store.dispatch(new SetCurrentPage({ curr_page: 0 }));
   }
 
@@ -175,32 +172,20 @@ export class TimeTrialComponent implements OnInit, AfterViewInit {
     this._store.dispatch(new AddSnapshot({ snapshot: this.elapsed_time.clone().asMilliseconds() }));
   }
 
-  removeStart(boaty: Boat, snapshots: number[]) {
+  removeStart(boaty: Boat) {
     if (boaty.start != null) {
-      const idx = snapshots.findIndex(val => val > boaty.start[0]);
-      if (idx < 0) {
-        transferArrayItem([boaty.start], snapshots, 0, snapshots.length);
-      } else {
-        transferArrayItem([boaty.start], snapshots, 0, idx);
-      }
+      this._store.dispatch(new AddSnapshot({ snapshot: boaty.start }));
       boaty.start = null;
       boaty.time = null;
-      this._store.dispatch(new LoadSnapshots({ snapshots }));
       this._store.dispatch(new UpdateBoat({ boat: { id: boaty.id, changes: boaty }}));
     }
   }
 
-  removeEnd(boaty: Boat, snapshots: number[]) {
+  removeEnd(boaty: Boat) {
     if (boaty.end != null) {
-      const idx = snapshots.findIndex(val => val > boaty.end[0]);
-      if (idx < 0) {
-        transferArrayItem([boaty.end], snapshots, 0, snapshots.length);
-      } else {
-        transferArrayItem([boaty.end], snapshots, 0, idx);
-      }
+      this._store.dispatch(new AddSnapshot({ snapshot: boaty.end }));
       boaty.time = null;
       boaty.end = null;
-      this._store.dispatch(new LoadSnapshots({ snapshots }));
       this._store.dispatch(new UpdateBoat({ boat: { id: boaty.id, changes: boaty }}));
     }
   }

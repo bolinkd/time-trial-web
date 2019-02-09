@@ -3,6 +3,29 @@
   flex: 0 1 100%;
 }
 
-.demo-button {
-  margin: auto;
+.time-trials {
+  width: 100%;
+  padding: 10px;
+  background: lightgrey;
+
+  & > mat-card {
+    margin-bottom: 10px;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  & > .time-trial {
+    & div {
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+  }
+}
+
+.create-button {
+  position: absolute;
+  bottom: 25px;
+  right: 25px;
 }

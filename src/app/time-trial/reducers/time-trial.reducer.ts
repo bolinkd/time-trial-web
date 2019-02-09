@@ -1,15 +1,16 @@
-import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
-import { TimeTrial } from '../models/time-trial.model';
-import { TimeTrialActions, TimeTrialActionTypes } from '../actions/time-trial.actions';
+import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
+import {TimeTrial} from '../models/time-trial.model';
+import {TimeTrialActions, TimeTrialActionTypes} from '../actions/time-trial.actions';
+import {createFeatureSelector, createSelector} from '@ngrx/store';
 
 export interface State extends EntityState<TimeTrial> {
-  // additional entities state properties
+  selected_time_trial_id: number;
 }
 
 export const adapter: EntityAdapter<TimeTrial> = createEntityAdapter<TimeTrial>();
 
 export const initialState: State = adapter.getInitialState({
-  // additional entity state properties
+  selected_time_trial_id: null
 });
 
 export function reducer(
@@ -57,6 +58,10 @@ export function reducer(
       return adapter.removeAll(state);
     }
 
+    case TimeTrialActionTypes.SetSelectedTimeTrial: {
+      return Object.assign({}, state, { selected_time_trial_id: action.payload.id });
+    }
+
     default: {
       return state;
     }
@@ -64,8 +69,19 @@ export function reducer(
 }
 
 export const {
-  selectIds,
-  selectEntities,
-  selectAll,
-  selectTotal,
+  selectIds: getTimeTrialIds,
+  selectEntities: getTimeTrialEntities,
+  selectAll: getAllTimeTrials,
+  selectTotal: getTimeTrialTotal,
 } = adapter.getSelectors();
+
+const getSelectedTimeTrialId = (state: State) => state.selected_time_trial_id;
+
+const getTimeTrialState = createFeatureSelector('time-trials');
+export const selectAllTimeTrials = createSelector(getTimeTrialState, getAllTimeTrials);
+export const selectSelectedTimeTrialId = createSelector(getTimeTrialState, getSelectedTimeTrialId);
+export const selectTimeTrialEntities = createSelector(getTimeTrialState, getTimeTrialEntities);
+export const selectSelectedTimeTrial = createSelector(
+  selectSelectedTimeTrialId,
+  selectTimeTrialEntities,
+  (selected_id, entities) => entities[selected_id]);

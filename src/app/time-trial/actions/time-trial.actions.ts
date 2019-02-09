@@ -12,7 +12,9 @@ export enum TimeTrialActionTypes {
   UpdateTimeTrials = '[TimeTrial] Update TimeTrials',
   DeleteTimeTrial = '[TimeTrial] Delete TimeTrial',
   DeleteTimeTrials = '[TimeTrial] Delete TimeTrials',
-  ClearTimeTrials = '[TimeTrial] Clear TimeTrials'
+  ClearTimeTrials = '[TimeTrial] Clear TimeTrials',
+
+  SetSelectedTimeTrial = '[TimeTrial] Set Selected Time Trial'
 }
 
 export class LoadTimeTrials implements Action {
@@ -60,27 +62,34 @@ export class UpdateTimeTrials implements Action {
 export class DeleteTimeTrial implements Action {
   readonly type = TimeTrialActionTypes.DeleteTimeTrial;
 
-  constructor(public payload: { id: string }) {}
+  constructor(public payload: { id: number }) {}
 }
 
 export class DeleteTimeTrials implements Action {
   readonly type = TimeTrialActionTypes.DeleteTimeTrials;
 
-  constructor(public payload: { ids: string[] }) {}
+  constructor(public payload: { ids: number[] }) {}
 }
 
 export class ClearTimeTrials implements Action {
   readonly type = TimeTrialActionTypes.ClearTimeTrials;
 }
 
-export type TimeTrialActions =
- LoadTimeTrials
- | AddTimeTrial
- | UpsertTimeTrial
- | AddTimeTrials
- | UpsertTimeTrials
- | UpdateTimeTrial
- | UpdateTimeTrials
- | DeleteTimeTrial
- | DeleteTimeTrials
- | ClearTimeTrials;
+export class SetSelectedTimeTrial implements Action {
+  readonly type = TimeTrialActionTypes.SetSelectedTimeTrial;
+
+  constructor(public payload: { id: number }) { }
+}
+
+export type TimeTrialActions
+  = LoadTimeTrials
+  | AddTimeTrial
+  | UpsertTimeTrial
+  | AddTimeTrials
+  | UpsertTimeTrials
+  | UpdateTimeTrial
+  | UpdateTimeTrials
+  | DeleteTimeTrial
+  | DeleteTimeTrials
+  | ClearTimeTrials
+  | SetSelectedTimeTrial;

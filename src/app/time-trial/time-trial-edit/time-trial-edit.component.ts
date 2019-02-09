@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-time-trial-edit',
@@ -7,9 +8,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TimeTrialEditComponent implements OnInit {
 
-  constructor() { }
+  constructor(private _store: Store<any>) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
   }
 
+  updateTimeTrial(event) {
+    console.log(event);
+  }
+
+  cancelUpdate() {
+    window.history.back();
+  }
 }

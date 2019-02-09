@@ -1,3 +1,20 @@
-<button class="demo-button" routerLink="3" color="accent" mat-raised-button>
-  TEST DEMO
+<div class="time-trials" fxLayout="column">
+  <mat-card *ngFor="let time_trial of time_trials$ | async" class="time-trial" fxLayoutAlign="space-between" fxLayout="row">
+    <div>{{ time_trial.date | date: 'longDate' }}</div>
+    <div>{{ time_trial.distance }} km</div>
+    <div>{{ time_trial.timers }}</div>
+    <div>
+      <button mat-icon-button [routerLink]="time_trial.id + '/edit'">
+        <mat-icon>edit</mat-icon>
+      </button>
+
+      <button mat-icon-button [routerLink]="time_trial.id">
+        <mat-icon>timer</mat-icon>
+      </button>
+    </div>
+  </mat-card>
+</div>
+
+<button class="create-button" routerLink="new" mat-fab>
+  <mat-icon>add</mat-icon>
 </button>
