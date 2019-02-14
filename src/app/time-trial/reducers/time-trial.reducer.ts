@@ -7,7 +7,13 @@ export interface State extends EntityState<TimeTrial> {
   selected_time_trial_id: number;
 }
 
-export const adapter: EntityAdapter<TimeTrial> = createEntityAdapter<TimeTrial>();
+function sortByDate(t1: TimeTrial, t2: TimeTrial) {
+  return t2.date.diff(t1.date);
+}
+
+export const adapter: EntityAdapter<TimeTrial> = createEntityAdapter<TimeTrial>({
+  sortComparer: sortByDate
+});
 
 export const initialState: State = adapter.getInitialState({
   selected_time_trial_id: null
@@ -18,40 +24,20 @@ export function reducer(
   action: TimeTrialActions
 ): State {
   switch (action.type) {
-    case TimeTrialActionTypes.AddTimeTrial: {
-      return adapter.addOne(action.payload.timeTrial, state);
+    case TimeTrialActionTypes.UpdateTimeTrialSuccess: {
+      return adapter.updateOne(action.payload.time_trial, state);
     }
 
-    case TimeTrialActionTypes.UpsertTimeTrial: {
-      return adapter.upsertOne(action.payload.timeTrial, state);
-    }
-
-    case TimeTrialActionTypes.AddTimeTrials: {
-      return adapter.addMany(action.payload.timeTrials, state);
-    }
-
-    case TimeTrialActionTypes.UpsertTimeTrials: {
-      return adapter.upsertMany(action.payload.timeTrials, state);
-    }
-
-    case TimeTrialActionTypes.UpdateTimeTrial: {
-      return adapter.updateOne(action.payload.timeTrial, state);
-    }
-
-    case TimeTrialActionTypes.UpdateTimeTrials: {
-      return adapter.updateMany(action.payload.timeTrials, state);
+    case TimeTrialActionTypes.CreateTimeTrialSuccess: {
+      return adapter.addOne(action.payload.time_trial, state);
     }
 
     case TimeTrialActionTypes.DeleteTimeTrial: {
       return adapter.removeOne(action.payload.id, state);
     }
 
-    case TimeTrialActionTypes.DeleteTimeTrials: {
-      return adapter.removeMany(action.payload.ids, state);
-    }
-
     case TimeTrialActionTypes.LoadTimeTrials: {
-      return adapter.addAll(action.payload.timeTrials, state);
+      return adapter.addAll(action.payload.time_trials, state);
     }
 
     case TimeTrialActionTypes.ClearTimeTrials: {
@@ -60,6 +46,14 @@ export function reducer(
 
     case TimeTrialActionTypes.SetSelectedTimeTrial: {
       return Object.assign({}, state, { selected_time_trial_id: action.payload.id });
+    }
+
+    case TimeTrialActionTypes.GetAllTimeTrialsSuccess: {
+      return adapter.addMany(action.payload.time_trials, state);
+    }
+
+    case TimeTrialActionTypes.GetTimeTrialByIdSuccess: {
+      return adapter.addOne(action.payload.time_trial, state);
     }
 
     default: {

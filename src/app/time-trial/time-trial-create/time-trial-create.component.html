@@ -1,3 +1,3 @@
-<p>
-  time-trial-create works!
-</p>
+<mat-card style="margin: auto">
+  <app-time-trial-form (complete)="createTimeTrial($event)" (cancel)="cancelUpdate()"></app-time-trial-form>
+</mat-card>

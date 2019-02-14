@@ -4,18 +4,19 @@ import { Boat } from '../models/boat.model';
 
 export enum BoatActionTypes {
   LoadBoats = '[Boat] Load Boats',
-  AddBoat = '[Boat] Add Boat',
-  UpsertBoat = '[Boat] Upsert Boat',
-  AddBoats = '[Boat] Add Boats',
-  UpsertBoats = '[Boat] Upsert Boats',
+  CreateBoat = '[Boat] Create Boat',
+  CreateBoatSuccess = '[Boat] Create Boat Success',
+  CreateBoatFailure = '[Boat] Create Boat Failure',
+
   UpdateBoat = '[Boat] Update Boat',
-  UpdateBoats = '[Boat] Update Boats',
+  UpdateBoatSuccess = '[Boat] Update Boat Success',
+  UpdateBoatFailure = '[Boat] Update Boat Failure',
   DeleteBoat = '[Boat] Delete Boat',
-  DeleteBoats = '[Boat] Delete Boats',
   ClearBoats = '[Boat] Clear Boats',
 
   SetCurrentPage = '[Boat] Set Current Page',
-  SetPageSize = '[Boat] Set Page Size'
+  SetPageSize = '[Boat] Set Page Size',
+  SetSelectedBoat = '[Boat] Set Selected Boat'
 }
 
 export class LoadBoats implements Action {
@@ -24,52 +25,46 @@ export class LoadBoats implements Action {
   constructor(public payload: { boats: Boat[] }) {}
 }
 
-export class AddBoat implements Action {
-  readonly type = BoatActionTypes.AddBoat;
-
-  constructor(public payload: { boat: Boat }) {}
-}
-
-export class UpsertBoat implements Action {
-  readonly type = BoatActionTypes.UpsertBoat;
-
-  constructor(public payload: { boat: Boat }) {}
-}
-
-export class AddBoats implements Action {
-  readonly type = BoatActionTypes.AddBoats;
-
-  constructor(public payload: { boats: Boat[] }) {}
-}
-
-export class UpsertBoats implements Action {
-  readonly type = BoatActionTypes.UpsertBoats;
-
-  constructor(public payload: { boats: Boat[] }) {}
-}
-
 export class UpdateBoat implements Action {
   readonly type = BoatActionTypes.UpdateBoat;
+
+  constructor(public payload: { boat: Boat }) {}
+}
+
+export class UpdateBoatSuccess implements Action {
+  readonly type = BoatActionTypes.UpdateBoatSuccess;
 
   constructor(public payload: { boat: Update<Boat> }) {}
 }
 
-export class UpdateBoats implements Action {
-  readonly type = BoatActionTypes.UpdateBoats;
+export class UpdateBoatFailure implements Action {
+  readonly type = BoatActionTypes.UpdateBoatFailure;
 
-  constructor(public payload: { boats: Update<Boat>[] }) {}
+  constructor(public payload: { error: any }) {}
+}
+
+export class CreateBoat implements Action {
+  readonly type = BoatActionTypes.CreateBoat;
+
+  constructor(public payload: { boat: Boat }) {}
+}
+
+export class CreateBoatSuccess implements Action {
+  readonly type = BoatActionTypes.CreateBoatSuccess;
+
+  constructor(public payload: { boat: Boat }) {}
+}
+
+export class CreateBoatFailure implements Action {
+  readonly type = BoatActionTypes.CreateBoatFailure;
+
+  constructor(public payload: { error: any }) {}
 }
 
 export class DeleteBoat implements Action {
   readonly type = BoatActionTypes.DeleteBoat;
 
   constructor(public payload: { id: string }) {}
-}
-
-export class DeleteBoats implements Action {
-  readonly type = BoatActionTypes.DeleteBoats;
-
-  constructor(public payload: { ids: string[] }) {}
 }
 
 export class ClearBoats implements Action {
@@ -88,16 +83,23 @@ export class SetPageSize implements Action {
   constructor(public payload: { page_size: number }) {}
 }
 
+export class SetSelectedBoat implements Action {
+  readonly type = BoatActionTypes.SetSelectedBoat;
+
+  constructor(public payload: { id: number }) {}
+}
+
 export type BoatActions
   = LoadBoats
-  | AddBoat
-  | UpsertBoat
-  | AddBoats
-  | UpsertBoats
   | UpdateBoat
-  | UpdateBoats
+  | UpdateBoatSuccess
+  | UpdateBoatFailure
+  | CreateBoat
+  | CreateBoatSuccess
+  | CreateBoatFailure
+  | UpdateBoat
   | DeleteBoat
-  | DeleteBoats
   | ClearBoats
   | SetCurrentPage
-  | SetPageSize;
+  | SetPageSize
+  | SetSelectedBoat;

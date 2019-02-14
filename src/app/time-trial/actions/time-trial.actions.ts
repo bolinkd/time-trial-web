@@ -3,72 +3,105 @@ import { Update } from '@ngrx/entity';
 import { TimeTrial } from '../models/time-trial.model';
 
 export enum TimeTrialActionTypes {
-  LoadTimeTrials = '[TimeTrial] Load TimeTrials',
-  AddTimeTrial = '[TimeTrial] Add TimeTrial',
-  UpsertTimeTrial = '[TimeTrial] Upsert TimeTrial',
-  AddTimeTrials = '[TimeTrial] Add TimeTrials',
-  UpsertTimeTrials = '[TimeTrial] Upsert TimeTrials',
+  GetAllTimeTrials = '[TimeTrial] Get All TimeTrials',
+  GetAllTimeTrialsSuccess = '[TimeTrial] Get All TimeTrials Success',
+  GetAllTimeTrialsFailure = '[TimeTrial] Get All TimeTrials Failure',
+  GetTimeTrialById = '[TimeTrial] Get TimeTrial By Id',
+  GetTimeTrialByIdSuccess = '[TimeTrial] Get TimeTrial By Id Success',
+  GetTimeTrialByIdFailure = '[TimeTrial] Get TimeTrial By Id Failure',
+  CreateTimeTrial = '[TimeTrial] Create TimeTrial',
+  CreateTimeTrialSuccess = '[TimeTrial] Create TimeTrial Success',
+  CreateTimeTrialFailure = '[TimeTrial] Create TimeTrial Failure',
   UpdateTimeTrial = '[TimeTrial] Update TimeTrial',
-  UpdateTimeTrials = '[TimeTrial] Update TimeTrials',
+  UpdateTimeTrialSuccess = '[TimeTrial] Update TimeTrial Success',
+  UpdateTimeTrialFailure = '[TimeTrial] Update TimeTrial Failure',
+  LoadTimeTrials = '[TimeTrial] Load TimeTrials',
   DeleteTimeTrial = '[TimeTrial] Delete TimeTrial',
-  DeleteTimeTrials = '[TimeTrial] Delete TimeTrials',
   ClearTimeTrials = '[TimeTrial] Clear TimeTrials',
 
   SetSelectedTimeTrial = '[TimeTrial] Set Selected Time Trial'
 }
 
+export class GetTimeTrials implements Action {
+  readonly type = TimeTrialActionTypes.GetAllTimeTrials;
+}
+
+export class GetTimeTrialsSuccess implements Action {
+  readonly type = TimeTrialActionTypes.GetAllTimeTrialsSuccess;
+
+  constructor(public payload: { time_trials: TimeTrial[] }) {}
+}
+
+export class GetTimeTrialsFailure implements Action {
+  readonly type = TimeTrialActionTypes.GetAllTimeTrialsFailure;
+
+  constructor(public payload: { error: any }) {}
+}
+
+export class GetTimeTrialById implements Action {
+  readonly type = TimeTrialActionTypes.GetTimeTrialById;
+
+  constructor(public payload: { id: number }) {}
+}
+
+export class GetTimeTrialByIdSuccess implements Action {
+  readonly type = TimeTrialActionTypes.GetTimeTrialByIdSuccess;
+
+  constructor(public payload: { time_trial: TimeTrial }) {}
+}
+
+export class GetTimeTrialByIdFailure implements Action {
+  readonly type = TimeTrialActionTypes.GetTimeTrialByIdFailure;
+
+  constructor(public payload: { error: any }) {}
+}
+
 export class LoadTimeTrials implements Action {
   readonly type = TimeTrialActionTypes.LoadTimeTrials;
 
-  constructor(public payload: { timeTrials: TimeTrial[] }) {}
+  constructor(public payload: { time_trials: TimeTrial[] }) {}
 }
 
-export class AddTimeTrial implements Action {
-  readonly type = TimeTrialActionTypes.AddTimeTrial;
+export class CreateTimeTrial implements Action {
+  readonly type = TimeTrialActionTypes.CreateTimeTrial;
 
-  constructor(public payload: { timeTrial: TimeTrial }) {}
+  constructor(public payload: { time_trial: TimeTrial }) {}
 }
 
-export class UpsertTimeTrial implements Action {
-  readonly type = TimeTrialActionTypes.UpsertTimeTrial;
+export class CreateTimeTrialSuccess implements Action {
+  readonly type = TimeTrialActionTypes.CreateTimeTrialSuccess;
 
-  constructor(public payload: { timeTrial: TimeTrial }) {}
+  constructor(public payload: { time_trial: TimeTrial }) {}
 }
 
-export class AddTimeTrials implements Action {
-  readonly type = TimeTrialActionTypes.AddTimeTrials;
+export class CreateTimeTrialFailure implements Action {
+  readonly type = TimeTrialActionTypes.CreateTimeTrialFailure;
 
-  constructor(public payload: { timeTrials: TimeTrial[] }) {}
-}
-
-export class UpsertTimeTrials implements Action {
-  readonly type = TimeTrialActionTypes.UpsertTimeTrials;
-
-  constructor(public payload: { timeTrials: TimeTrial[] }) {}
+  constructor(public payload: { error: any }) {}
 }
 
 export class UpdateTimeTrial implements Action {
   readonly type = TimeTrialActionTypes.UpdateTimeTrial;
 
-  constructor(public payload: { timeTrial: Update<TimeTrial> }) {}
+  constructor(public payload: { time_trial: TimeTrial }) {}
 }
 
-export class UpdateTimeTrials implements Action {
-  readonly type = TimeTrialActionTypes.UpdateTimeTrials;
+export class UpdateTimeTrialSuccess implements Action {
+  readonly type = TimeTrialActionTypes.UpdateTimeTrialSuccess;
 
-  constructor(public payload: { timeTrials: Update<TimeTrial>[] }) {}
+  constructor(public payload: { time_trial: Update<TimeTrial> }) {}
+}
+
+export class UpdateTimeTrialFailure implements Action {
+  readonly type = TimeTrialActionTypes.UpdateTimeTrialFailure;
+
+  constructor(public payload: { error: any }) {}
 }
 
 export class DeleteTimeTrial implements Action {
   readonly type = TimeTrialActionTypes.DeleteTimeTrial;
 
   constructor(public payload: { id: number }) {}
-}
-
-export class DeleteTimeTrials implements Action {
-  readonly type = TimeTrialActionTypes.DeleteTimeTrials;
-
-  constructor(public payload: { ids: number[] }) {}
 }
 
 export class ClearTimeTrials implements Action {
@@ -83,13 +116,16 @@ export class SetSelectedTimeTrial implements Action {
 
 export type TimeTrialActions
   = LoadTimeTrials
-  | AddTimeTrial
-  | UpsertTimeTrial
-  | AddTimeTrials
-  | UpsertTimeTrials
   | UpdateTimeTrial
-  | UpdateTimeTrials
+  | UpdateTimeTrialSuccess
+  | UpdateTimeTrialFailure
+  | CreateTimeTrial
+  | CreateTimeTrialSuccess
+  | CreateTimeTrialFailure
   | DeleteTimeTrial
-  | DeleteTimeTrials
   | ClearTimeTrials
-  | SetSelectedTimeTrial;
+  | SetSelectedTimeTrial
+  | GetTimeTrials
+  | GetTimeTrialsSuccess
+  | GetTimeTrialsFailure
+  | GetTimeTrialByIdSuccess;

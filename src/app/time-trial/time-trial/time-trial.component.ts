@@ -1,31 +1,36 @@
 import {
-  AfterViewChecked,
-  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component, DoCheck,
-  ElementRef, HostListener,
+  Component,
+  ElementRef,
+  OnDestroy,
   OnInit,
   QueryList,
   ViewChild,
   ViewChildren
 } from '@angular/core';
-import {Moment} from 'moment';
-import {CdkDrag, CdkDragDrop, CdkDropList, transferArrayItem} from '@angular/cdk/drag-drop';
 import * as moment from 'moment';
+import {Moment} from 'moment';
+import {CdkDrag, CdkDragDrop, CdkDropList} from '@angular/cdk/drag-drop';
 import {Boat} from '../models/boat.model';
 import {select, Store} from '@ngrx/store';
-import {AddBoats, ClearBoats, SetCurrentPage, SetPageSize, UpdateBoat, UpdateBoats} from '../actions/boat.actions';
-import {Observable} from 'rxjs';
+import {SetCurrentPage, SetPageSize, UpdateBoat} from '../actions/boat.actions';
+import {Observable, Subscription} from 'rxjs';
 import {selectBoatPageCount, selectCurrentBoats, selectCurrentPage} from '../reducers/boat.reducer';
-import {AddSnapshot, ClearSnapshots, DeleteSnapshot, LoadSnapshots} from '../actions/snapshot.actions';
+import {TimeTrial, TimingStatus} from '../models/time-trial.model';
+import {GetTimeTrialById, SetSelectedTimeTrial, UpdateTimeTrial} from '../actions/time-trial.actions';
+import {ActivatedRoute} from '@angular/router';
+import {selectSelectedTimeTrial, selectSelectedTimeTrialId} from '../reducers/time-trial.reducer';
+import {filter, map, take} from 'rxjs/operators';
+import {untilDestroy} from '@ngrx-utils/store';
+import {selectCurrentTimeTrialSnapshots} from '../reducers/snapshot.reducer';
+import {AddSnapshot, DeleteSnapshot, LoadSnapshotsLocalStorage} from '../actions/snapshot.actions';
 import {Snapshot} from '../models/snapshot.model';
-import {selectSnapshots} from '../reducers/snapshot.reducer';
-import {TimingStatus} from '../models/time-trial.model';
 
 enum BoatTime {
   'start' = 0,
-  'end'
+  'end',
+  'other'
 }
 
 @Component({
@@ -34,7 +39,7 @@ enum BoatTime {
   styleUrls: ['./time-trial.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TimeTrialComponent implements OnInit, AfterViewInit {
+export class TimeTrialComponent implements OnInit, OnDestroy {
   @ViewChildren('lists') lists: QueryList<CdkDropList>;
   @ViewChild('snapshotsContainer') snapshots_container: ElementRef;
   @ViewChild('boatsContainer') boats_container: ElementRef;
@@ -44,55 +49,75 @@ export class TimeTrialComponent implements OnInit, AfterViewInit {
   BoatTime = BoatTime;
   TimingStatus = TimingStatus;
 
-  start_time: Moment = null;
+  timer: any = null;
   curr_time: Moment = null;
-  elapsed_time: Snapshot = null;
-  time_state: TimingStatus = TimingStatus.reset;
+  elapsed_time: number = null;
 
   scroll_down_interval = null;
   scroll_up_interval = null;
 
-  timer: any = null;
-
-  dragged_snapshot_boat: Boat = null;
-  dragged_snapshot_boat_time: BoatTime = null;
+  dragged_boat: Boat = null;
+  dragged_start: BoatTime = null;
   dragged_snapshot: number = null;
 
   current_boats$: Observable<Boat[]>;
   boat_page_count$: Observable<number>;
   curr_page$: Observable<number>;
-  snapshots$: Observable<number[]>;
+  snapshots$: Observable<Snapshot[]>;
+  time_trial$: Observable<TimeTrial>;
+  time_trial_id$: Observable<number>;
 
-  initial_boats: Boat[] = [
-    new Boat('Boat 1', 1),
-    new Boat('Boat 2', 2),
-    new Boat('Boat 3', 3),
-    new Boat('Boat 4', 4),
-    new Boat('Boat 5', 5),
-    new Boat('Boat 6', 6),
-    new Boat('Boat 7', 7),
-    new Boat('Boat 8', 8),
-    new Boat('Boat 9', 9),
-    new Boat('Boat 10', 10),
-    new Boat('Boat 11', 11),
-  ];
+  ngOnDestroy(): void { }
 
-  @HostListener('window:resize') onResize() {
-    this.pageResize();
-  }
-
-  constructor(private cdRef: ChangeDetectorRef, private _store: Store<any>) { }
+  constructor(private cdRef: ChangeDetectorRef,
+              private _store: Store<any>,
+              private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.reset();
+    const sizeChangeObserver = new MutationObserver(() => this.pageResize());
+    sizeChangeObserver.observe(this.boats_container.nativeElement, { attributes: true });
+
+    this._store.dispatch(new GetTimeTrialById({ id: +this.route.snapshot.params.id }));
+    this._store.dispatch(new SetSelectedTimeTrial({ id: +this.route.snapshot.params.id }));
+    this._store.dispatch(new LoadSnapshotsLocalStorage());
     this.current_boats$ = this._store.pipe(select(selectCurrentBoats));
     this.boat_page_count$ = this._store.pipe(select(selectBoatPageCount));
     this.curr_page$ = this._store.pipe(select(selectCurrentPage));
-    this.snapshots$ = this._store.pipe(select(selectSnapshots));
+    this.snapshots$ = this._store.pipe(select(selectCurrentTimeTrialSnapshots));
+    this.time_trial$ = this._store.pipe(select(selectSelectedTimeTrial));
+    this.time_trial_id$ = this._store.pipe(select(selectSelectedTimeTrialId));
+    this.time_trial$
+      .pipe(filter(x => x != null), take(1), untilDestroy(this))
+      .subscribe(time_trial => this.initTimer(time_trial));
   }
 
-  ngAfterViewInit(): void {
-    this.pageResize();
+
+
+  createSnapshot(time: number): Subscription {
+    return this.time_trial_id$
+      .pipe(
+        filter(x => x != null),
+        take(1),
+        map(time_trial_id => new Snapshot(time, time_trial_id))
+      )
+      .subscribe(snapshot => this._store.dispatch(new AddSnapshot({ snapshot })));
+  }
+
+  deleteSnapshot(time: number): Subscription {
+    return this.time_trial_id$
+      .pipe(
+        filter(x => x != null),
+        take(1),
+        map(time_trial_id => new Snapshot(time, time_trial_id))
+      )
+      .subscribe(snapshot => this._store.dispatch(new DeleteSnapshot({ snapshot })));
+  }
+
+  initTimer(time_trial: TimeTrial) {
+    if (time_trial && time_trial.timing_status === TimingStatus.running) {
+      this.updateTimer();
+      this.timer = setInterval(() => this.updateTimer(), 10);
+    }
   }
 
   pageResize() {
@@ -102,48 +127,54 @@ export class TimeTrialComponent implements OnInit, AfterViewInit {
     this.cdRef.detectChanges();
   }
 
-  toggleTimerState() {
-    if (this.time_state === TimingStatus.reset) {
-      this.start_time = moment();
-      this._store.dispatch(new AddSnapshot({ snapshot: moment.duration(0).asMilliseconds() }));
-      this.updateTimer();
-      this.timer = setInterval(() => this.updateTimer(), 10);
-      this.time_state = TimingStatus.running;
-    } else if (this.time_state === TimingStatus.running) {
+  toggleTimerState(time_trial: TimeTrial) {
+    if (time_trial.timing_status === TimingStatus.reset) {
+      time_trial.start_time = moment();
+      time_trial.timing_status = TimingStatus.running;
+      this.createSnapshot(moment.duration(0).asMilliseconds());
+      this.initTimer(time_trial);
+    } else if (time_trial.timing_status === TimingStatus.running) {
       clearInterval(this.timer);
-      this._store.dispatch(new AddSnapshot({ snapshot: this.elapsed_time.asMilliseconds() }));
-      this.time_state = TimingStatus.stopped;
-    } else if (this.time_state === TimingStatus.stopped) {
-      this.reset();
-      this.time_state = TimingStatus.reset;
+      this.createSnapshot(this.elapsed_time);
+      time_trial.timing_status = TimingStatus.stopped;
+    } else if (time_trial.timing_status === TimingStatus.stopped) {
+      this.reset(time_trial);
+      time_trial.timing_status = TimingStatus.reset;
     }
+    this._store.dispatch(new UpdateTimeTrial({ time_trial }));
   }
 
-  toggleTimerDescription() {
-    if (this.time_state === TimingStatus.reset) {
+  toggleTimerDescription(time_trial: TimeTrial) {
+    if (time_trial == null) {
       return 'Start';
-    } else if (this.time_state === TimingStatus.running) {
+    }
+    if (time_trial.timing_status === TimingStatus.reset) {
+      return 'Start';
+    } else if (time_trial.timing_status === TimingStatus.running) {
       return 'Stop';
-    } else if (this.time_state === TimingStatus.stopped) {
+    } else if (time_trial.timing_status === TimingStatus.stopped) {
       return 'Reset';
     }
   }
 
-  reset() {
-    this.start_time = null;
+  reset(time_trial: TimeTrial) {
+    time_trial.start_time = null;
+    this._store.dispatch(new UpdateTimeTrial({ time_trial }));
     this.curr_time = null;
     this.elapsed_time = null;
-    this._store.dispatch(new ClearSnapshots());
-    this._store.dispatch(new ClearBoats());
-    const boats = this.initial_boats.map(boat => new Boat(boat.name, boat.bow_marker));
-    this._store.dispatch(new AddBoats({ boats }));
     this._store.dispatch(new SetCurrentPage({ curr_page: 0 }));
   }
 
   updateTimer() {
-    this.curr_time = moment();
-    this.elapsed_time = moment.duration(this.curr_time.diff(this.start_time));
-    this.cdRef.markForCheck();
+    this.time_trial$
+      .pipe(
+        take(1),
+        map(time_trial => time_trial.start_time)
+      ).subscribe(start_time => {
+      this.curr_time = moment();
+      this.elapsed_time = moment.duration(this.curr_time.diff(start_time)).asMilliseconds();
+      this.cdRef.markForCheck();
+    });
   }
 
   formatValue(val: number, numZero: number = 2): string {
@@ -169,86 +200,120 @@ export class TimeTrialComponent implements OnInit, AfterViewInit {
   }
 
   takeSnapshot() {
-    this._store.dispatch(new AddSnapshot({ snapshot: this.elapsed_time.clone().asMilliseconds() }));
+    this.createSnapshot(this.elapsed_time);
   }
 
-  removeStart(boaty: Boat) {
-    if (boaty.start != null) {
-      this._store.dispatch(new AddSnapshot({ snapshot: boaty.start }));
-      boaty.start = null;
-      boaty.time = null;
-      this._store.dispatch(new UpdateBoat({ boat: { id: boaty.id, changes: boaty }}));
+  removeStart(boat: Boat) {
+    if (boat.start != null) {
+      this.createSnapshot(boat.start);
+      boat.start = null;
+      boat.time = null;
+      this._store.dispatch(new UpdateBoat({ boat }));
     }
   }
 
-  removeEnd(boaty: Boat) {
-    if (boaty.end != null) {
-      this._store.dispatch(new AddSnapshot({ snapshot: boaty.end }));
-      boaty.time = null;
-      boaty.end = null;
-      this._store.dispatch(new UpdateBoat({ boat: { id: boaty.id, changes: boaty }}));
+  removeEnd(boat: Boat) {
+    if (boat.end != null) {
+      this.createSnapshot(boat.end);
+      boat.time = null;
+      boat.end = null;
+      this._store.dispatch(new UpdateBoat({ boat }));
     }
   }
 
-  updateBoaty(boaty: Boat) {
-    if (boaty.start != null && boaty.end != null) {
-      const duration = moment.duration(boaty.end);
-      boaty.time = duration.clone().subtract(boaty.start).asMilliseconds();
+  updateBoat(boat: Boat) {
+    if (boat.start != null && boat.end != null) {
+      const duration = moment.duration(boat.end);
+      boat.time = duration.clone().subtract(boat.start).asMilliseconds();
     } else {
-      boaty.time = null;
+      boat.time = null;
     }
-    this._store.dispatch(new UpdateBoat({ boat: { id: boaty.id, changes: boaty }}));
+    this._store.dispatch(new UpdateBoat({ boat }));
   }
 
-  dragStartSnapshot(snapshot: number, boat: Boat = null, boat_time: BoatTime = null) {
+  dragStartSnapshot(snapshot: number, boat: Boat = null, location: BoatTime = null) {
+    this.dragged_boat = boat;
+    this.dragged_start = location;
     this.dragged_snapshot = snapshot;
-    this.dragged_snapshot_boat = boat;
-    this.dragged_snapshot_boat_time = boat_time;
   }
 
-  drop(event: CdkDragDrop<number[]>, boaty: Boat, location: BoatTime) {
+  clearDraggedData() {
+    this.dragged_boat = null;
+    this.dragged_start = null;
+    this.dragged_snapshot = null;
+  }
+
+  removeEventTimeFromDraggedBoat(boat: Boat) {
+    switch (this.dragged_start) {
+      case BoatTime.start: {
+        this.dragged_boat.start = null;
+        break;
+      }
+      case BoatTime.end: {
+        this.dragged_boat.end = null;
+        break;
+      }
+    }
+    this.dragged_boat.time = null;
+    if (boat == null) {
+      this.createSnapshot(this.dragged_snapshot);
+    }
+    this._store.dispatch(new UpdateBoat({ boat: this.dragged_boat }));
+  }
+
+  addEventTimeToBoat(dragEvent: CdkDragDrop<number[]>, boat: Boat, location: BoatTime): boolean {
+    const snapshot = dragEvent.previousContainer.data[dragEvent.previousIndex];
+    if (location === BoatTime.start) {
+      if (boat.end != null && (boat.end < snapshot)) {
+        console.log('ERROR');
+        this.clearDraggedData();
+        return false;
+      }
+      boat.start = this.dragged_snapshot;
+
+    } else if (location === BoatTime.end) {
+      if (boat.start != null && boat.start > snapshot) {
+        console.log('ERROR');
+        this.clearDraggedData();
+        return false;
+      }
+      boat.end = this.dragged_snapshot;
+    }
+
+    if (this.dragged_boat == null) {
+      this.deleteSnapshot(this.dragged_snapshot);
+    }
+
+    if (boat != null) {
+      this.updateBoat(boat);
+    }
+    return true;
+  }
+
+  drop(event: CdkDragDrop<number[]>, boat: Boat, location: BoatTime) {
+    if (boat == null && location == null) {
+      switch (this.dragged_start) {
+        case BoatTime.start: {
+          return this.removeStart(this.dragged_boat);
+        }
+        case BoatTime.end: {
+          return this.removeEnd(this.dragged_boat);
+        }
+      }
+    }
+
     if (event.previousContainer === event.container) {
+      this.clearDraggedData();
       return;
     }
 
-    const snapshot = event.previousContainer.data[event.previousIndex];
-    if (location === BoatTime.start) {
-      if (boaty.end != null && boaty.end < snapshot) {
-        console.log('ERROR');
-        return;
-      }
-      boaty.start = snapshot;
-      this._store.dispatch(new UpdateBoat({ boat: { id: boaty.id, changes: boaty }}));
-      this._store.dispatch(new DeleteSnapshot({ snapshot }));
-
-    } else if (location === BoatTime.end) {
-      if (boaty.start != null && boaty.start > snapshot) {
-        console.log('ERROR');
-        return;
-      }
-      boaty.end = snapshot;
-      this._store.dispatch(new UpdateBoat({ boat: { id: boaty.id, changes: boaty }}));
-      this._store.dispatch(new DeleteSnapshot({ snapshot }));
+    this.addEventTimeToBoat(event, boat, location);
+    if (this.dragged_boat != null) {
+      this.removeEventTimeFromDraggedBoat(boat);
+    } else {
+      this.deleteSnapshot(this.dragged_snapshot);
     }
-
-    if (this.dragged_snapshot_boat != null) {
-      switch (this.dragged_snapshot_boat_time) {
-        case BoatTime.start: {
-          this.dragged_snapshot_boat.start = null;
-          break;
-        }
-        case BoatTime.end: {
-          this.dragged_snapshot_boat.end = null;
-          break;
-        }
-      }
-      this.dragged_snapshot_boat.time = null;
-      this._store.dispatch(new UpdateBoat({ boat: { id: this.dragged_snapshot_boat.id, changes: this.dragged_snapshot_boat }}));
-    }
-
-    if (boaty != null) {
-      this.updateBoaty(boaty);
-    }
+    this.clearDraggedData();
   }
 
   getLists() {
@@ -262,11 +327,11 @@ export class TimeTrialComponent implements OnInit, AfterViewInit {
     return false;
   }
 
-  canAddToBoaty(snapshot: number | null): ((item: CdkDrag<number>) => boolean) {
+  canAddToBoaty(snapshot: Snapshot): ((item: CdkDrag<number>) => boolean) {
     return () => snapshot == null;
   }
 
-  removeSnapshot(snapshot: number) {
+  removeSnapshot(snapshot: Snapshot) {
     this._store.dispatch(new DeleteSnapshot({ snapshot }));
   }
 
@@ -322,5 +387,9 @@ export class TimeTrialComponent implements OnInit, AfterViewInit {
 
   getPageArray(len: number) {
     return new Array(len);
+  }
+
+  getSnapshots(snapshots: Snapshot[]): number[] {
+    return snapshots.map(x => x.time);
   }
 }

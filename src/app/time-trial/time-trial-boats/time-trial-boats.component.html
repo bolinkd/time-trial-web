@@ -1,0 +1,48 @@
+<div fxLayout="column" fxFlex="0 1 100%">
+  <div class="time-trial mat-elevation-z10"
+            *ngLet="time_trial$ | async; let time_trial">
+    <div fxLayout="row" class="top-row" fxLayoutAlign="space-between">
+      <div class="left-container">
+        <button mat-icon-button (click)="goBack()">
+          <mat-icon>arrow_back_ios</mat-icon>
+        </button>
+        <b class="header">Time Trial</b>
+      </div>
+      <div class="right-container">
+        <button mat-icon-button routerLink="../edit">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </div>
+    </div>
+    <div fxLayout="row" class="seperator"></div>
+    <div fxLayout="row" fxLayoutAlign="space-between">
+      <div><b>Date:</b> {{ time_trial?.date | date: 'longDate':'UTC' }}</div>
+      <div><b>Timers:</b> {{ time_trial?.timers }}</div>
+      <div><b>Distance:</b> {{ time_trial?.distance }} km</div>
+    </div>
+  </div>
+
+  <div fxLayout="row"  fxFlex="1 1 auto">
+    <div fxLayout="column" class="boats" >
+      <mat-card *ngFor="let boat of boats$ | async" class="boat">
+        <div class="details">
+          <div fxLayout="row" fxLayoutAlign="space-between">
+            <div>{{ boat.bow_marker}}: {{ boat.name }}</div>
+            <div>
+              <button mat-icon-button [routerLink]="boat.id">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+      <mat-card class="boat placeholder"></mat-card>
+      <mat-card class="boat placeholder"></mat-card>
+      <mat-card class="boat placeholder"></mat-card>
+    </div>
+  </div>
+</div>
+
+<button class="create-button" routerLink="new" mat-fab>
+  <mat-icon>add</mat-icon>
+</button>

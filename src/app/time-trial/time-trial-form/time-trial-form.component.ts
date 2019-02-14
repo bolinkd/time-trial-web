@@ -1,29 +1,29 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {TimerCount, TimeTrial} from '../models/time-trial.model';
 import {Observable} from 'rxjs';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {SetSelectedTimeTrial} from '../actions/time-trial.actions';
+import {GetTimeTrialById, SetSelectedTimeTrial} from '../actions/time-trial.actions';
 import {select, Store} from '@ngrx/store';
 import {selectSelectedTimeTrial} from '../reducers/time-trial.reducer';
-import {take} from 'rxjs/operators';
 import {ActivatedRoute} from '@angular/router';
 import * as moment from 'moment';
-import {Update} from '@ngrx/entity';
+import {untilDestroy} from '@ngrx-utils/store';
 
 @Component({
   selector: 'app-time-trial-form',
   templateUrl: './time-trial-form.component.html',
   styleUrls: ['./time-trial-form.component.scss']
 })
-export class TimeTrialFormComponent implements OnInit {
-  @Output('cancel') cancel = new EventEmitter<any>();
-  @Output('complete') complete = new EventEmitter<Update<TimeTrial>>();
+export class TimeTrialFormComponent implements OnInit, OnDestroy {
+  @Output() cancel = new EventEmitter<any>();
+  @Output() complete = new EventEmitter<TimeTrial>();
 
   TimerCount = TimerCount;
 
   time_trial$: Observable<TimeTrial>;
 
   timeTrialGroup: FormGroup;
+  timeTrialIdControl: FormControl;
   timeTrialDateControl: FormControl;
   timeTrialDistanceControl: FormControl;
   timeTrialTimersControl: FormControl;
@@ -32,33 +32,39 @@ export class TimeTrialFormComponent implements OnInit {
 
   ngOnInit() {
     this._store.dispatch(new SetSelectedTimeTrial({ id: +this.route.snapshot.params.id }));
+    this._store.dispatch(new GetTimeTrialById({ id: +this.route.snapshot.params.id }));
     this.time_trial$ = this._store.pipe(select(selectSelectedTimeTrial));
     this.setupFormGroup();
     this.time_trial$
-      .pipe(take(1))
+      .pipe(untilDestroy(this))
       .subscribe(time_trial => {
         this.updateTimeTrialForm(time_trial);
       });
   }
 
+  ngOnDestroy(): void { }
+
   updateTimeTrialForm(time_trial: TimeTrial) {
     if (time_trial == null) {
+      this.timeTrialIdControl.setValue(null);
       this.timeTrialDateControl.setValue(moment().startOf('day'));
       this.timeTrialDistanceControl.setValue(2);
       this.timeTrialTimersControl.setValue(TimerCount.one);
     } else {
+      this.timeTrialIdControl.setValue(time_trial.id);
       this.timeTrialDateControl.setValue(time_trial.date);
       this.timeTrialDistanceControl.setValue(time_trial.distance);
       this.timeTrialTimersControl.setValue(time_trial.timers);
     }
-
   }
 
   setupFormGroup() {
+    this.timeTrialIdControl = new FormControl(null);
     this.timeTrialDateControl = new FormControl(null, Validators.required);
     this.timeTrialDistanceControl = new FormControl(null, Validators.required);
     this.timeTrialTimersControl = new FormControl(null, Validators.required);
     this.timeTrialGroup = new FormGroup({
+      id: this.timeTrialIdControl,
       date: this.timeTrialDateControl,
       distance: this.timeTrialDistanceControl,
       timers: this.timeTrialTimersControl,
@@ -66,7 +72,7 @@ export class TimeTrialFormComponent implements OnInit {
   }
 
   completeForm() {
-    const update: Update<TimeTrial> = this.timeTrialGroup.getRawValue() as Update<TimeTrial>;
-    this.complete.emit(update);
+    const time_trial: TimeTrial = this.timeTrialGroup.getRawValue() as TimeTrial;
+    this.complete.emit(time_trial);
   }
 }

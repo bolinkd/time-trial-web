@@ -1,0 +1,60 @@
+:host {
+  display: flex;
+  flex: 0 1 100%;
+}
+
+.boats {
+  width: 100%;
+  padding: 10px;
+  background: lightgrey;
+  overflow: scroll;
+
+  & > mat-card {
+    margin-bottom: 10px;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  & > .boat {
+    &.placeholder {
+      min-height: 30px;
+      visibility: hidden;
+    }
+
+    & div {
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+  }
+}
+
+.create-button {
+  position: absolute;
+  bottom: 25px;
+  right: 25px;
+}
+
+.time-trial {
+  padding: 10px 20px 20px 20px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border: 1px solid;
+  & > .top-row {
+    & > .left-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      & > .header {
+        margin: auto 0;
+      }
+    }
+  }
+
+  & > .seperator {
+    height: 1px;
+    margin: 10px 0;
+    background: lightgrey;
+  }
+}

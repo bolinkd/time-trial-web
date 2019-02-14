@@ -1,9 +1,10 @@
-import { SnapshotActions, SnapshotActionTypes } from '../actions/snapshot.actions';
-import {createFeatureSelector, createSelector} from '@ngrx/store';
-import * as moment from 'moment';
+import {createFeatureSelector, createSelector, select} from '@ngrx/store';
+import {SnapshotActions, SnapshotActionTypes} from '../actions/snapshot.actions';
+import {Snapshot} from '../models/snapshot.model';
+import {selectSelectedTimeTrialId} from './time-trial.reducer';
 
 export interface State {
-  snapshots: number[];
+  snapshots: Snapshot[];
 }
 
 export const initialState: State = {
@@ -17,14 +18,19 @@ export function reducer(
   switch (action.type) {
     case SnapshotActionTypes.AddSnapshot: {
       return Object.assign({}, state, {
-        snapshots: state.snapshots.concat(action.payload.snapshot).sort((x, y) => x - y)
+        snapshots: state.snapshots.concat(action.payload.snapshot).sort((x, y) => x.time - y.time)
       });
     }
 
     case SnapshotActionTypes.DeleteSnapshot: {
       const snapshots = state.snapshots;
       return Object.assign({}, state, {
-        snapshots: snapshots.filter(x => x !== action.payload.snapshot)
+        snapshots: snapshots
+          .filter(snapshot => {
+            const time_trial_id_match = snapshot.time_trial_id === action.payload.snapshot.time_trial_id;
+            const time_match = snapshot.time === action.payload.snapshot.time;
+            return !(time_trial_id_match && time_match);
+          })
       });
     }
 
@@ -46,3 +52,8 @@ export const getSnapshots = (state: State) => state.snapshots;
 
 export const selectSnapshotState = createFeatureSelector<State>('snapshots');
 export const selectSnapshots = createSelector(selectSnapshotState, getSnapshots);
+export const selectCurrentTimeTrialSnapshots = createSelector(
+  selectSnapshots,
+  selectSelectedTimeTrialId,
+  (snapshots, time_trial_id) => snapshots.filter(x => x.time_trial_id === time_trial_id)
+);

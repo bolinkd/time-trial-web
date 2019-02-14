@@ -7,12 +7,13 @@ export class Boat {
   time: number;
   bow_marker: number;
 
-  constructor(name: string, bow_marker: number) {
-    this.id = bow_marker;
-    this.name = name;
-    this.start = null;
-    this.end = null;
-    this.time = null;
-    this.bow_marker = bow_marker;
+  constructor(json: any) {
+    this.id = json.id;
+    this.time_trial_id = json.time_trial_id;
+    this.name = json.name;
+    this.start = json.start;
+    this.end = json.end;
+    this.time = json.time;
+    this.bow_marker = json.bow_marker;
   }
 }
