@@ -31,8 +31,11 @@ export class TimeTrialFormComponent implements OnInit, OnDestroy {
   constructor(private _store: Store<any>, private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this._store.dispatch(new SetSelectedTimeTrial({ id: +this.route.snapshot.params.id }));
-    this._store.dispatch(new GetTimeTrialById({ id: +this.route.snapshot.params.id }));
+    const time_trial_id = +this.route.snapshot.params.id;
+    this._store.dispatch(new SetSelectedTimeTrial({ id: time_trial_id }));
+    if (!isNaN(time_trial_id)) {
+      this._store.dispatch(new GetTimeTrialById({ id: time_trial_id }));
+    }
     this.time_trial$ = this._store.pipe(select(selectSelectedTimeTrial));
     this.setupFormGroup();
     this.time_trial$
