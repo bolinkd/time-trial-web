@@ -6,16 +6,6 @@ import { TimeTrialCreateComponent } from './components/time-trial-create/time-tr
 import { TimeTrialComponent } from './components/time-trial/time-trial.component';
 import {TimeTrialRoutingModule} from './time-trial-routing.module';
 import {DragDropModule} from '@angular/cdk/drag-drop';
-import {
-  MatBadgeModule,
-  MatButtonModule,
-  MatCardModule,
-  MatDatepickerModule,
-  MatFormFieldModule,
-  MatIconModule,
-  MatInputModule,
-  MatMenuModule, MatSelectModule
-} from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {TimeTrialNgrxModule} from './time-trial-ngrx.module';
 import {NgLetModule} from '@ngrx-utils/store';
@@ -26,6 +16,7 @@ import {TimeTrialBoatsComponent} from './components/time-trial-boats/time-trial-
 import {TimeTrialBoatsEditComponent} from './components/time-trial-boats-edit/time-trial-boats-edit.component';
 import {TimeTrialBoatsCreateComponent} from './components/time-trial-boats-create/time-trial-boats-create.component';
 import {TimeTrialBoatsFormComponent} from './components/time-trial-boats-form/time-trial-boats-form.component';
+import {AppMaterialModule} from '../material';
 
 @NgModule({
   declarations: [
@@ -45,16 +36,8 @@ import {TimeTrialBoatsFormComponent} from './components/time-trial-boats-form/ti
     TimeTrialNgrxModule,
     FlexLayoutModule,
     DragDropModule,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatMenuModule,
-    MatFormFieldModule,
-    MatDatepickerModule,
     MatMomentDateModule,
-    MatSelectModule,
-    MatInputModule,
-    MatBadgeModule,
+    AppMaterialModule,
     ReactiveFormsModule,
     NgLetModule,
   ],

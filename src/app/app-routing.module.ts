@@ -9,7 +9,7 @@ const routes: Routes = [
   { path: '', component: AppShellComponent, children: [
       { path: '', component: HomeComponent, canActivate: [AuthGuard] },
       { path: 'login', component: LoginComponent },
-      { path: 'time-trial', loadChildren: './time-trial/time-trial.module#TimeTrialModule' }
+      { path: 'time-trial', loadChildren: () => import('./time-trial/time-trial.module').then(m => m.TimeTrialModule) }
     ]
   },
 ];
