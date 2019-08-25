@@ -27,6 +27,7 @@ import {MatTreeModule} from '@angular/material/tree';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatRadioModule} from '@angular/material/radio';
+import {MatBadgeModule} from '@angular/material/badge';
 
 @NgModule({
   imports: [
@@ -85,6 +86,7 @@ import {MatRadioModule} from '@angular/material/radio';
     MatStepperModule,
     MatTableModule,
     MatToolbarModule,
+    MatBadgeModule,
     MatMomentDateModule,
     ReactiveFormsModule,
   ],
