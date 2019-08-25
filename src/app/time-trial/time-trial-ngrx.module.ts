@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StoreModule } from '@ngrx/store';
-import * as fromSnapshot from './reducers/snapshot.reducer';
-import * as fromBoat from './reducers/boat.reducer';
-import * as fromTimeTrial from './reducers/time-trial.reducer';
+import * as fromSnapshot from './state/reducers/snapshot.reducer';
+import * as fromBoat from './state/reducers/boat.reducer';
+import * as fromTimeTrial from './state/reducers/time-trial.reducer';
 import {EffectsModule} from '@ngrx/effects';
-import {TimeTrialEffects} from './effects/time-trial.effects';
-import {BoatEffects} from './effects/boat.effects';
-import {SnapshotEffects} from './effects/snapshot.effects';
+import {TimeTrialEffects} from './state/effects/time-trial.effects';
+import {BoatEffects} from './state/effects/boat.effects';
+import {SnapshotEffects} from './state/effects/snapshot.effects';
 
 @NgModule({
   declarations: [],

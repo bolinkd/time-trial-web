@@ -1,0 +1,150 @@
+<div fxLayout="column" fxFlexFill>
+  <div fxLayout="row" class="timer-row" fxLayoutAlign="space-between" *ngLet="time_trial$ | async; let time_trial">
+    <button mat-button
+            [disabled]="time_trial == null"
+            (click)="toggleTimerState(time_trial)">
+      {{ toggleTimerDescription(time_trial) }}
+    </button>
+    <div class="timer">
+      {{ formatSnapshot(elapsed_time) }}
+    </div>
+    <button mat-button [disabled]="time_trial?.timing_status != TimingStatus.running" (click)="takeSnapshot()">Lap</button>
+  </div>
+
+  <mat-card fxLayout="column" fxFlex="1 1 auto" class="boat-info-container">
+    <div fxFlex="1 1 auto" fxLayout="row" class="boats-container" #boatsContainer>
+      <div fxLayout="column" fxFlex="1 1 auto" fxLayoutAlign="space-evenly" class="boats-list">
+        <mat-card class="boat" *ngFor="let boat of (current_boats$ | async)">
+          <div>#{{ boat.bow_marker }}: {{ boat.name }}</div>
+          <mat-card-content>
+            <div fxLayout="row">
+              <div fxLayout="column" class="drop-list-label">
+                Start:
+              </div>
+
+              <div class="example-list no-scroll"
+                   #lists="cdkDropList"
+                   fxLayout="column"
+                   fxFlex="1 1 auto"
+                   cdkDropList
+                   [cdkDropListData]="[boat.start]"
+                   [cdkDropListConnectedTo]="getLists()"
+                   [cdkDropListEnterPredicate]="canAddToBoaty(boat.start)"
+                   (cdkDropListDropped)="drop($event, boat, BoatTime.start)">
+                <div *ngIf="boat.start != null"
+                     class="snapshot example-box"
+                     (cdkDragStarted)="dragStartSnapshot(boat.start, boat, BoatTime.start)"
+                     cdkDrag>
+                  <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+                  {{ formatSnapshot(boat?.start) }}
+                </div>
+              </div>
+            </div>
+
+            <div fxLayout="row">
+              <div fxLayout="column" class="drop-list-label">
+                End:
+              </div>
+
+              <div class="example-list no-scroll"
+                   #lists="cdkDropList"
+                   fxLayout="column"
+                   fxFlex="1 1 auto"
+                   cdkDropList
+                   [cdkDropListData]="[boat.end]"
+                   [cdkDropListConnectedTo]="getLists()"
+                   [cdkDropListEnterPredicate]="canAddToBoaty(boat.end)"
+                   (cdkDropListDropped)="drop($event, boat, BoatTime.end)">
+                <div *ngIf="boat.end != null"
+                     class="snapshot example-box"
+                     (cdkDragStarted)="dragStartSnapshot(boat.end, boat, BoatTime.end)"
+                     cdkDrag>
+                  <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+                  {{ formatSnapshot(boat?.end) }}
+                </div>
+              </div>
+            </div>
+
+            <div fxLayout="row">
+              <div fxLayout="column" class="drop-list-label">
+                Time:
+              </div>
+
+              <div class="example-list no-scroll"
+                   fxLayout="column"
+                   fxFlex="1 1 auto">
+                <div class="snapshot example-box">
+                  {{ formatSnapshot(boat?.time) }}
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+    <div *ngLet="{ curr_page: curr_page$ | async, page_count: boat_page_count$ | async }; let page_info" fxLayout="row" fxLayoutAlign="space-between">
+      <button mat-button
+              [disabled]="page_info.curr_page == 0"
+              (click)="setPage(page_info.curr_page - 1)">
+        Prev
+      </button>
+      <div class="dot-container">
+        <div *ngFor="let page of getPageArray(page_info.page_count); let idx = index"
+             class="dot"
+             (click)="setPage(idx)"
+             [ngClass]="{ 'selected': idx == page_info.curr_page }">
+        </div>
+      </div>
+      <button mat-button
+              [disabled]="page_info.curr_page == page_info.page_count - 1"
+              (click)="setPage(page_info.curr_page + 1)">
+        Next
+      </button>
+    </div>
+  </mat-card>
+
+  <mat-card *ngLet="snapshots$ | async; let snapshots" fxFlex="0 1 120px" fxLayout="row" class="snapshots">
+    <div class="example-list"
+         #lists="cdkDropList"
+         #snapshotsContainer
+         [cdkDropListData]="getSnapshots(snapshots)"
+         fxFlex="1 1 100%"
+         [cdkDropListConnectedTo]="getLists()"
+         (cdkDropListDropped)="drop($event, null, null)"
+         cdkDropList>
+      <div *ngFor="let snapshot of snapshots"
+           class="snapshot example-box"
+           cdkDrag
+           (cdkDragStarted)="dragStartSnapshot(snapshot.time)">
+        <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+        {{ formatSnapshot(snapshot?.time) }}
+        <span mat-icon-button (click)="removeSnapshot(snapshot); $event.stopPropagation()" class="delete">
+        <mat-icon class="remove-snapshot-icon">clear</mat-icon>
+      </span>
+      </div>
+    </div>
+
+    <div fxLayout="column" class="arrows" fxLayoutAlign="space-between">
+      <button mat-icon-button
+              #scrollUpButton
+              [disableRipple]="true"
+              [disabled]="snapshotsContainer.scrollTop == 0"
+              (mousedown)="mouseDownScrollUp()"
+              (mouseup)="mouseUpScrollUp()"
+              (click)="scrollSnapshots('up')">
+        <mat-icon>keyboard_arrow_up</mat-icon>
+      </button>
+      <button mat-icon-button
+              #scrollDownButton
+              [disableRipple]="true"
+              [disabled]="snapshotsContainer.scrollTop + snapshotsContainer.clientHeight === snapshotsContainer.scrollHeight"
+              (mousedown)="mouseDownScrollDown()"
+              (mouseup)="mouseUpScrollDown()"
+              (click)="scrollSnapshots('down')">
+        <mat-icon>keyboard_arrow_down</mat-icon>
+      </button>
+    </div>
+  </mat-card>
+
+</div>
+

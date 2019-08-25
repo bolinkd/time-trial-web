@@ -1,0 +1,18 @@
+<div fxLayout="column">
+  <mat-form-field fxLayout="row">
+    <mat-label>Organization</mat-label>
+    <mat-select>
+      <mat-option [value]="null"></mat-option>
+      <mat-option [value]="1">VRS</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field fxLayout="row">
+    <mat-label>Password</mat-label>
+    <input type="password" matInput>
+  </mat-form-field>
+
+  <button (click)="login()" mat-raised-button color="primary">log in</button>
+</div>
+
+

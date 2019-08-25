@@ -1,0 +1,23 @@
+<mat-drawer-container class="drawer-container">
+  <mat-drawer #drawer mode="over">
+    <mat-toolbar class="header" color="primary"></mat-toolbar>
+    <mat-nav-list>
+      <mat-list-item [routerLink]="'/'">Home</mat-list-item>
+      <mat-divider></mat-divider>
+      <mat-list-item [routerLink]="'/time-trial'">Time Trials</mat-list-item>
+      <mat-divider></mat-divider>
+      <mat-list-item [routerLink]="'/boat-log'">Boat Logging</mat-list-item>
+    </mat-nav-list>
+  </mat-drawer>
+
+  <div fxFlexFill fxLayout="column">
+    <mat-toolbar class="header" color="primary" fxFlex="0 1 60px" fxLayout="row">
+      <mat-icon (click)="drawer.open()">menu</mat-icon> VCRC Time Trial
+    </mat-toolbar>
+
+    <div class="content" fxFlex="1 1 auto" fxLayout="row">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+
+</mat-drawer-container>

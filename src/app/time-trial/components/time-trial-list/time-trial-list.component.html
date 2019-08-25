@@ -1,0 +1,40 @@
+<div fxFlexFill fxLayout="column">
+  <mat-card *ngFor="let time_trial of time_trials$ | async"
+            class="time-trial"
+            fxFlex fxLayout="row"
+            gdAreas="date options | distance info" gdGap="10px" gdColumns="auto 150px">
+    <div *ngIf="time_trial.date; let date" gdArea="date">
+      {{ date | date: 'longDate':'utc' }}
+    </div>
+    <div gdArea="options">
+      <button mat-icon-button [routerLink]="time_trial.id + '/edit'">
+        <mat-icon>edit</mat-icon>
+      </button>
+
+      <button mat-icon-button [routerLink]="time_trial.id + '/boats'">
+        <mat-icon matBadgeSize="medium" [matBadge]="(getBoatsForTimeTrial(time_trial) | async).length">list</mat-icon>
+      </button>
+
+      <button mat-icon-button (click)="test(time_trial)"> <!--[routerLink]="time_trial.id"-->
+        <mat-icon>timer</mat-icon>
+      </button>
+    </div>
+
+    <div *ngIf="time_trial?.distance != null" gdArea="distance">
+      <b>Distance:</b>
+      {{ time_trial.distance }} km
+    </div>
+
+    <div *ngIf="time_trial?.timers != null" gdArea="info">
+      <b>Timers:</b>
+      {{ time_trial.timers }}
+    </div>
+  </mat-card>
+  <mat-card class="time-trial placeholder"></mat-card>
+  <mat-card class="time-trial placeholder"></mat-card>
+  <mat-card class="time-trial placeholder"></mat-card>
+</div>
+
+<button class="create-button" routerLink="new" mat-fab>
+  <mat-icon>add</mat-icon>
+</button>

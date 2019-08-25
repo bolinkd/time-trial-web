@@ -1,0 +1,78 @@
+import { NgModule } from '@angular/core';
+import {
+  MatButtonModule, MatCardModule, MatCheckboxModule, MatChipsModule,
+  MatDatepickerModule,
+  MatExpansionModule, MatIconModule,
+  MatInputModule, MatListModule, MatMenuModule,
+  MatPaginatorModule, MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule,
+  MatSelectModule, MatSidenavModule, MatSliderModule, MatSlideToggleModule, MatSnackBarModule,
+  MatSortModule, MatStepperModule,
+  MatTableModule, MatTabsModule, MatToolbarModule, MatTooltipModule, MatTreeModule
+} from '@angular/material';
+import {MatMomentDateModule} from '@angular/material-moment-adapter';
+import {ReactiveFormsModule} from '@angular/forms';
+
+@NgModule({
+  imports: [
+    MatButtonModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatDatepickerModule,
+    MatExpansionModule,
+    MatIconModule,
+    MatChipsModule,
+    MatTabsModule,
+    MatInputModule,
+    MatListModule,
+    MatPaginatorModule,
+    MatTooltipModule,
+    MatSnackBarModule,
+    MatStepperModule,
+    MatProgressSpinnerModule,
+    MatProgressBarModule,
+    MatSelectModule,
+    MatSlideToggleModule,
+    MatSidenavModule,
+    MatSliderModule,
+    MatSortModule,
+    MatTableModule,
+    MatTreeModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatRadioModule,
+    MatMomentDateModule,
+    ReactiveFormsModule,
+  ],
+  exports: [
+    MatButtonModule,
+    MatCardModule,
+    MatTabsModule,
+    MatCheckboxModule,
+    MatTreeModule,
+    MatDatepickerModule,
+    MatChipsModule,
+    MatMenuModule,
+    MatExpansionModule,
+    MatIconModule,
+    MatRadioModule,
+    MatInputModule,
+    MatListModule,
+    MatTooltipModule,
+    MatPaginatorModule,
+    MatProgressSpinnerModule,
+    MatProgressBarModule,
+    MatSelectModule,
+    MatSidenavModule,
+    MatSlideToggleModule,
+    MatSliderModule,
+    MatSortModule,
+    MatStepperModule,
+    MatTableModule,
+    MatToolbarModule,
+    MatMomentDateModule,
+    ReactiveFormsModule,
+  ],
+  declarations: [
+  ]
+})
+export class AppMaterialModule {}

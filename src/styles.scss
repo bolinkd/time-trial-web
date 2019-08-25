@@ -6,4 +6,15 @@ body {
   width: 100vw;
   margin: 0;
   padding: 0;
+  background: lightgrey;
 }
+
+div::-webkit-scrollbar {width: 7px; height: 0;}
+div::-webkit-scrollbar-track {margin: 54px 0 53px}
+div::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.0);
+  border-radius: 10px;
+  box-shadow: rgba(255,255,255,0.3) 0 0 0 1px;
+}
+div:hover::-webkit-scrollbar-thumb {background: rgba(0,0,0,0.45)}
+div::-webkit-scrollbar-thumb:hover {background: rgba(0,0,0,0.55)}

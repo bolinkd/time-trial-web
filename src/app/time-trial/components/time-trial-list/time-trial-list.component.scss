@@ -1,0 +1,41 @@
+:host {
+  background-color: lightgrey;
+  height: 100%;
+  width: 100%;
+  padding: 10px;
+  overflow-y: scroll;
+}
+
+mat-card.time-trial {
+  margin-bottom: 10px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &.placeholder {
+    min-height: 50px;
+    visibility: hidden;
+  }
+
+  & div {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+
+  & > .details {
+    & > .seperator {
+      height: 1px;
+      width: 100%;
+      background: lightgrey;
+      margin-top: 5px;
+      margin-bottom: 15px;
+    }
+  }
+}
+
+.create-button {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+}
