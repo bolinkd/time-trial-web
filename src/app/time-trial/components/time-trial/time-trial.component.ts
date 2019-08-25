@@ -40,10 +40,10 @@ enum BoatTime {
 })
 export class TimeTrialComponent implements OnInit, OnDestroy {
   @ViewChildren('lists') lists: QueryList<CdkDropList>;
-  @ViewChild('snapshotsContainer') snapshots_container: ElementRef;
-  @ViewChild('boatsContainer') boats_container: ElementRef;
-  @ViewChild('scrollUpButton') scroll_up_button: ElementRef;
-  @ViewChild('scrollDownButton') scroll_down_button: ElementRef;
+  @ViewChild('snapshotsContainer', { static: false }) snapshots_container: ElementRef;
+  @ViewChild('boatsContainer', { static: false }) boats_container: ElementRef;
+  @ViewChild('scrollUpButton', { static: false }) scroll_up_button: ElementRef;
+  @ViewChild('scrollDownButton', { static: false }) scroll_down_button: ElementRef;
 
   BoatTime = BoatTime;
   TimingStatus = TimingStatus;
