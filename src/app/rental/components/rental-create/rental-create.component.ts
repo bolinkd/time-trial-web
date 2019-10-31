@@ -50,4 +50,8 @@ export class RentalCreateComponent implements OnInit {
       });
   }
 
+  cancelCreate() {
+    this.router.navigate(['../'], { relativeTo: this.route });
+  }
+
 }
