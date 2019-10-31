@@ -28,9 +28,12 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatBadgeModule} from '@angular/material/badge';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatDialogModule} from '@angular/material/dialog';
 
 @NgModule({
   imports: [
+    MatAutocompleteModule,
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
@@ -57,10 +60,12 @@ import {MatBadgeModule} from '@angular/material/badge';
     MatMenuModule,
     MatToolbarModule,
     MatRadioModule,
+    MatDialogModule,
     MatMomentDateModule,
     ReactiveFormsModule,
   ],
   exports: [
+    MatAutocompleteModule,
     MatButtonModule,
     MatCardModule,
     MatTabsModule,
@@ -87,6 +92,7 @@ import {MatBadgeModule} from '@angular/material/badge';
     MatTableModule,
     MatToolbarModule,
     MatBadgeModule,
+    MatDialogModule,
     MatMomentDateModule,
     ReactiveFormsModule,
   ],

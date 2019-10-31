@@ -1,5 +1,5 @@
 <div fxLayout="column" fxFlexFill>
-  <div fxLayout="row" class="timer-row" fxLayoutAlign="space-between" *ngLet="time_trial$ | async; let time_trial">
+  <div fxLayout="row" class="timer-row" fxLayoutAlign="space-between" *ngLet="time_trial$ | async; let time_trial;">
     <button mat-button
             [disabled]="time_trial == null"
             (click)="toggleTimerState(time_trial)">
@@ -82,7 +82,7 @@
         </mat-card>
       </div>
     </div>
-    <div *ngLet="{ curr_page: curr_page$ | async, page_count: boat_page_count$ | async }; let page_info" fxLayout="row" fxLayoutAlign="space-between">
+    <div *ngLet="{ curr_page: curr_page$ | async, page_count: boat_page_count$ | async }; let page_info;" fxLayout="row" fxLayoutAlign="space-between">
       <button mat-button
               [disabled]="page_info.curr_page == 0"
               (click)="setPage(page_info.curr_page - 1)">
@@ -103,7 +103,7 @@
     </div>
   </mat-card>
 
-  <mat-card *ngLet="snapshots$ | async; let snapshots" fxFlex="0 1 120px" fxLayout="row" class="snapshots">
+  <mat-card *ngLet="snapshots$ | async; let snapshots;" fxFlex="0 1 120px" fxLayout="row" class="snapshots">
     <div class="example-list"
          #lists="cdkDropList"
          #snapshotsContainer

@@ -7,7 +7,8 @@ import {
   OnInit,
   QueryList,
   ViewChild,
-  ViewChildren
+  ViewChildren,
+  AfterViewInit
 } from '@angular/core';
 import * as moment from 'moment';
 import {Moment} from 'moment';
@@ -21,7 +22,7 @@ import {TimeTrial, TimingStatus} from '../../state/models/time-trial.model';
 import {GetTimeTrialById, SetSelectedTimeTrial, UpdateTimeTrial} from '../../state/actions/time-trial.actions';
 import {ActivatedRoute} from '@angular/router';
 import {selectSelectedTimeTrial, selectSelectedTimeTrialId} from '../../state/reducers/time-trial.reducer';
-import {filter, map, take} from 'rxjs/operators';
+import {filter, map, take, tap} from 'rxjs/operators';
 import {untilDestroy} from '@ngrx-utils/store';
 import {selectCurrentTimeTrialSnapshots} from '../../state/reducers/snapshot.reducer';
 import {AddSnapshot, DeleteSnapshot, LoadSnapshotsLocalStorage} from '../../state/actions/snapshot.actions';
@@ -38,7 +39,7 @@ enum BoatTime {
   styleUrls: ['./time-trial.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TimeTrialComponent implements OnInit, OnDestroy {
+export class TimeTrialComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren('lists') lists: QueryList<CdkDropList>;
   @ViewChild('snapshotsContainer', { static: false }) snapshots_container: ElementRef;
   @ViewChild('boatsContainer', { static: false }) boats_container: ElementRef;
@@ -73,11 +74,9 @@ export class TimeTrialComponent implements OnInit, OnDestroy {
               private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    const sizeChangeObserver = new MutationObserver(() => this.pageResize());
-    sizeChangeObserver.observe(this.boats_container.nativeElement, { attributes: true });
-
-    this._store.dispatch(new GetTimeTrialById({ id: +this.route.snapshot.params.id }));
-    this._store.dispatch(new SetSelectedTimeTrial({ id: +this.route.snapshot.params.id }));
+    const id = +this.route.snapshot.params.id;
+    this._store.dispatch(new GetTimeTrialById({ id }));
+    this._store.dispatch(new SetSelectedTimeTrial({ id }));
     this._store.dispatch(new LoadSnapshotsLocalStorage());
     this.current_boats$ = this._store.pipe(select(selectCurrentBoats));
     this.boat_page_count$ = this._store.pipe(select(selectBoatPageCount));
@@ -90,6 +89,10 @@ export class TimeTrialComponent implements OnInit, OnDestroy {
       .subscribe(time_trial => this.initTimer(time_trial));
   }
 
+  ngAfterViewInit() {
+    const sizeChangeObserver = new MutationObserver(() => this.pageResize());
+    sizeChangeObserver.observe(this.boats_container.nativeElement, { attributes: true });
+  }
 
 
   createSnapshot(time: number): Subscription {
@@ -133,7 +136,7 @@ export class TimeTrialComponent implements OnInit, OnDestroy {
   }
 
   toggleTimerState(time_trial: TimeTrial) {
-    if (time_trial.timing_status === TimingStatus.reset) {
+    if ([TimingStatus.reset, null].includes(time_trial.timing_status)) {
       time_trial.start_time = moment();
       time_trial.end_time = null;
       time_trial.timing_status = TimingStatus.running;
@@ -152,12 +155,10 @@ export class TimeTrialComponent implements OnInit, OnDestroy {
   }
 
   toggleTimerDescription(time_trial: TimeTrial) {
-    if (time_trial == null) {
+    if (time_trial == null || [TimingStatus.reset, null].includes(time_trial.timing_status)) {
       return 'Start';
     }
-    if (time_trial.timing_status === TimingStatus.reset) {
-      return 'Start';
-    } else if (time_trial.timing_status === TimingStatus.running) {
+    if (time_trial.timing_status === TimingStatus.running) {
       return 'Stop';
     } else if (time_trial.timing_status === TimingStatus.stopped) {
       return 'Reset';

@@ -3,7 +3,7 @@
             class="time-trial"
             fxFlex fxLayout="row"
             gdAreas="date options | distance info" gdGap="10px" gdColumns="auto 150px">
-    <div *ngIf="time_trial.date; let date" gdArea="date">
+    <div *ngIf="time_trial.date; let date;" gdArea="date">
       {{ date | date: 'longDate':'utc' }}
     </div>
     <div gdArea="options">
@@ -15,7 +15,7 @@
         <mat-icon matBadgeSize="medium" [matBadge]="(getBoatsForTimeTrial(time_trial) | async).length">list</mat-icon>
       </button>
 
-      <button mat-icon-button (click)="test(time_trial)"> <!--[routerLink]="time_trial.id"-->
+      <button mat-icon-button [routerLink]="time_trial.id">
         <mat-icon>timer</mat-icon>
       </button>
     </div>

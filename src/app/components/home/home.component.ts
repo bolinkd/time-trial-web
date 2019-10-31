@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {Store} from '@ngrx/store';
+import {GetCurrentOrganization} from '../../organization/state/actions/organization.actions';
 
 @Component({
   selector: 'app-home',
@@ -8,10 +9,10 @@ import {HttpClient} from '@angular/common/http';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private http: HttpClient) { }
+  constructor(private _store: Store<any>) { }
 
   ngOnInit() {
-    this.http.get('http://localhost:8080/v1/organizations/1').subscribe(x => console.log(x));
+    this._store.dispatch(new GetCurrentOrganization());
   }
 
 }

@@ -14,4 +14,9 @@ mat-drawer-container.drawer-container {
 .header {
   min-height: 60px;
   max-height: 60px;
+
+  & > .header-text {
+    cursor: pointer;
+    padding-left: 20px;
+  }
 }

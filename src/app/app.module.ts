@@ -21,13 +21,16 @@ import {HomeComponent} from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import {AppMaterialModule} from './material';
 import {MyHttpInterceptor} from './http/http.interceptor';
+import {OrganizationModule} from './organization/organization.module';
+import { LogoutComponent } from './components/logout/logout.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AppShellComponent,
     HomeComponent,
-    LoginComponent
+    LoginComponent,
+    LogoutComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -36,15 +39,19 @@ import {MyHttpInterceptor} from './http/http.interceptor';
     FlexLayoutModule,
     AppMaterialModule,
     HttpClientModule,
+    OrganizationModule,
     SocketModule.forRoot(),
     DeviceDetectorModule.forRoot(),
-    StoreModule.forRoot(reducers, { metaReducers }),
+    StoreModule.forRoot(reducers, {metaReducers}),
     StoreRouterConnectingModule.forRoot(),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production}),
     EffectsModule.forRoot([AppEffects])
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true },
+    {provide: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true},
+  ],
+  exports: [
+    AppShellComponent
   ],
   bootstrap: [AppComponent]
 })

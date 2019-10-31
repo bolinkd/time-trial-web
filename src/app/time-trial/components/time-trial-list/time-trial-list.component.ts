@@ -1,5 +1,6 @@
+import { TimeTrial } from './../../state/models/time-trial.model';
+import { Router, Route, ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
-import {TimeTrial} from '../../state/models/time-trial.model';
 import {select, Store} from '@ngrx/store';
 import {GetTimeTrials} from '../../state/actions/time-trial.actions';
 import {Observable} from 'rxjs';
@@ -19,7 +20,7 @@ export class TimeTrialListComponent implements OnInit {
   time_trials$: Observable<TimeTrial[]>;
   boats$: Observable<Boat[]>;
 
-  constructor(private _store: Store<any>, private socket: SocketService) { }
+  constructor(private _store: Store<any>, private socket: SocketService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.time_trials$ = this._store.pipe(select(selectAllTimeTrials));
@@ -33,6 +34,10 @@ export class TimeTrialListComponent implements OnInit {
 
   test(time_trial: TimeTrial) {
     this.socket.joinRace(time_trial);
+  }
+
+  goToTimeTrial(time_trial: TimeTrial) {
+    this.router.navigate([time_trial.id], { relativeTo: this.route });
   }
 
 }

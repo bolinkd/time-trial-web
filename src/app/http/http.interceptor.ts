@@ -13,7 +13,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
       const token = this.authService.getToken();
       const organization = this.authService.getOrganization();
       req = req.clone({
-        headers: req.headers.append('Authorization', token).append('Organization', organization)
+        headers: req.headers.append('Authorization', token).append('Organization', `${organization}`)
       });
     }
 

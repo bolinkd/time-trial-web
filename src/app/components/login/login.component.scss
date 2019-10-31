@@ -1,0 +1,19 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: auto;
+}
+
+div.warning {
+  color: red;
+  background: lightpink;
+  border: 1px solid red;
+  border-radius: 3px;
+  padding: 5px;
+  margin: 10px 0;
+
+  &.hidden {
+    visibility: hidden;
+  }
+}

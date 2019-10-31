@@ -1,0 +1,14 @@
+<h1 mat-dialog-title>Select Rower</h1>
+<div mat-dialog-content>
+  <mat-form-field>
+    <mat-select #matSelect>
+      <mat-option *ngFor="let rower of rowers$ | async" [value]="rower.id">
+        {{ rower.first_name }} {{ rower.last_name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button [mat-dialog-close]="matSelect.value" cdkFocusInitial>Ok</button>
+</div>

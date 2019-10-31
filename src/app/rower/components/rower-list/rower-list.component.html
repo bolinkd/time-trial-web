@@ -1,0 +1,13 @@
+<mat-card fxFlex fxLayout="column">
+  <div class="rower-list" fxFlex="1 1 auto" fxLayout="column">
+    <div *ngFor="let rower of rowers$ | async" class="rower"
+         gdAreas="name buttons | name buttons" gdGap="10px" gdColumns="auto 150px">
+      <div gdArea="name">{{ rower.first_name }} {{ rower.last_name}}</div>
+      <div fxLayoutAlign="flex-end" gdArea="buttons">
+        <button mat-icon-button>
+          <mat-icon>edit</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</mat-card>

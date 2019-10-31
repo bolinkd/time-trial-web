@@ -1,0 +1,22 @@
+<mat-card fxFlex fxLayout="column" *ngLet="shells$ | async; let shells">
+  <h4>Rentals</h4>
+  <div class="rental-list" fxFlex="1 1 auto" fxLayout="column">
+    <div *ngFor="let rental of rentals$ | async" class="rental"
+         gdAreas="shell buttons | out-time buttons" gdGap="10px" gdColumns="auto 150px">
+      <div gdArea="shell">{{ shells[rental.shell_id]?.name }}</div>
+      <div gdArea="out-time">{{ rental.out_time | date: 'short' }}</div>
+      <div fxLayoutAlign="flex-end" gdArea="buttons" *ngIf="rental.in_time == null">
+        <button (click)="markRentalAsReturned(rental)" mat-icon-button>
+          <mat-icon>assignment_returned</mat-icon>
+        </button>
+        <button mat-icon-button (click)="goToRental(rental)">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</mat-card>
+
+<button mat-fab (click)="createRental()">
+  <mat-icon>add</mat-icon>
+</button>

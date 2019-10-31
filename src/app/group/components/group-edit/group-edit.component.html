@@ -1,0 +1,28 @@
+<mat-card *ngLet="selected_group$ | async; let group;"
+          [formGroup]="groupForm"
+          fxFlex fxLayout="column">
+  <h4>Group</h4>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Name</mat-label>
+    <input formControlName="name" placeholder="Name" matInput>
+    <mat-error></mat-error>
+  </mat-form-field>
+
+  <div fxLayout="row" fxLayoutGap="10px">
+    <button mat-raised-button
+            [disabled]="!groupForm.dirty"
+            fxFlex fxLayout="column"
+            (click)="updateGroup(group)"
+            color="primary">
+      Save
+    </button>
+    <button mat-raised-button
+            [disabled]="!groupForm.dirty"
+            fxFlex fxLayout="column"
+            (click)="resetForm(group)"
+            color="warn">
+      Cancel
+    </button>
+  </div>
+</mat-card>

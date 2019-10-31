@@ -1,0 +1,21 @@
+:host {
+  height: 100%;
+}
+
+mat-tree-node {
+  border: 1px solid;
+  border-top: none;
+
+  &.selected { 
+    background: lightyellow;
+  }
+
+  &:first-child {
+    border-top: 1px solid;
+  }
+}
+
+button.edit-button {
+  position: absolute;
+  right: 25px;
+}

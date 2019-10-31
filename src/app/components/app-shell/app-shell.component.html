@@ -6,13 +6,22 @@
       <mat-divider></mat-divider>
       <mat-list-item [routerLink]="'/time-trial'">Time Trials</mat-list-item>
       <mat-divider></mat-divider>
-      <mat-list-item [routerLink]="'/boat-log'">Boat Logging</mat-list-item>
+      <mat-list-item [routerLink]="'/rentals'">Boathouse Management</mat-list-item>
+      <mat-divider></mat-divider>
+      <mat-list-item [routerLink]="'/admin'">Admin</mat-list-item>
+      <mat-divider></mat-divider>
+      <mat-list-item [routerLink]="'/logout'">Log Out</mat-list-item>
     </mat-nav-list>
   </mat-drawer>
 
   <div fxFlexFill fxLayout="column">
     <mat-toolbar class="header" color="primary" fxFlex="0 1 60px" fxLayout="row">
-      <mat-icon (click)="drawer.open()">menu</mat-icon> VCRC Time Trial
+      <button mat-icon-button (click)="drawer.open()">
+        <mat-icon fxLayout="column">menu</mat-icon>
+      </button>
+      <div class="header-text" fxLayout="column" (click)="goToHome()">
+        {{ getHeaderText(current_org$ | async) }}
+      </div>
     </mat-toolbar>
 
     <div class="content" fxFlex="1 1 auto" fxLayout="row">

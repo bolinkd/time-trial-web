@@ -1,0 +1,15 @@
+<mat-card *ngLet="rowers$ | async; let rowers" fxFlex="1 1" fxLayout="column">
+  <h4>Rowers</h4>
+  <div class="rental-rower-list" fxFlex="1 1 auto" fxLayout="column">
+    <div *ngFor="let rental_rower of rental_rowers$ | async" class="rental-rower"
+         (click)="deleteRentalRower(rental_rower)"
+         gdAreas="name buttons | name buttons" gdGap="10px" gdColumns="auto 150px">
+      <div gdArea="name">{{ rowers[rental_rower.rower_id]?.first_name }} {{ rowers[rental_rower.rower_id]?.last_name }}</div>
+      <div fxLayoutAlign="flex-end" gdArea="buttons">
+        <button color="warn" mat-icon-button>
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</mat-card>

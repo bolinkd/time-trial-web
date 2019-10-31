@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {catchError, map} from 'rxjs/operators';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +18,8 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
-  getOrganization() {
-    return localStorage.getItem(this.orgKey);
+  getOrganization(): number {
+    return +localStorage.getItem(this.orgKey);
   }
 
   private setAuth(organization_id: number, token: string) {
@@ -33,7 +34,7 @@ export class AuthService {
   }
 
   authenticate(organization_id: number, token: string): Observable<boolean> {
-    return this.http.post('http://localhost:8080/v1/authenticate', {
+    return this.http.post(environment.api_root + '/authenticate', {
       organization_id,
       phrase: token
     }).pipe(

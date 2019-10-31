@@ -1,18 +1,29 @@
-<div fxLayout="column">
+<mat-card [formGroup]="authGroup" fxLayout="column">
   <mat-form-field fxLayout="row">
     <mat-label>Organization</mat-label>
-    <mat-select>
+    <mat-select formControlName="organization_id">
       <mat-option [value]="null"></mat-option>
       <mat-option [value]="1">VRS</mat-option>
     </mat-select>
+    <mat-error *ngIf="authGroup.get('organization_id').hasError('required')">
+      Please select an organization
+    </mat-error>
   </mat-form-field>
 
   <mat-form-field fxLayout="row">
     <mat-label>Password</mat-label>
-    <input type="password" matInput>
+    <input formControlName="token" type="password" matInput>
+    <mat-error *ngIf="authGroup.get('token').hasError('required')">
+      Passphrase is required
+    </mat-error>
   </mat-form-field>
 
-  <button (click)="login()" mat-raised-button color="primary">log in</button>
-</div>
+  <button (click)="login()" [disabled]="authGroup.invalid" mat-raised-button color="primary">Login</button>
+
+  <div fxLayout="row" fxLayoutAlign="center" class="warning" [ngClass]="{ 'hidden' : !(auth_failed | async) }">
+    {{ auth_error_text }}
+  </div>
+
+</mat-card>
 
 

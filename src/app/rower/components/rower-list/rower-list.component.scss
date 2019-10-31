@@ -1,0 +1,30 @@
+:host {
+  height: 100%;
+}
+
+mat-card {
+  overflow: hidden;
+  & > div.rower-list {
+    border: 1px solid black;
+    border-radius: 3px;
+    overflow: overlay;
+    position: relative;
+
+    & > .rower {
+      border: 1px solid lightgrey;
+      border-radius: 3px;
+      padding: 10px;
+    }
+
+    & > .filler {
+      padding: 140px;
+    }
+
+    & > button.mat-raised-button.mat-icon-button {
+      position: sticky;
+      bottom: 2em;
+      margin-left: calc(100% - 5em);
+    }
+  }
+}
+

@@ -9,12 +9,12 @@ body {
   background: lightgrey;
 }
 
-div::-webkit-scrollbar {width: 7px; height: 0;}
-div::-webkit-scrollbar-track {margin: 54px 0 53px}
-div::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.0);
-  border-radius: 10px;
-  box-shadow: rgba(255,255,255,0.3) 0 0 0 1px;
+h4 {
+  padding: 0 0 15px 0;
+  margin: 0;
+  color: #673ab7;
 }
-div:hover::-webkit-scrollbar-thumb {background: rgba(0,0,0,0.45)}
-div::-webkit-scrollbar-thumb:hover {background: rgba(0,0,0,0.55)}
+
+.mat-tab-body-wrapper{
+  flex-grow: 1;
+}

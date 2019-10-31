@@ -1,0 +1,31 @@
+<mat-card fxFlex="1 1 0" fxLayout="column" [formGroup]="rentalForm">
+  <h4>Rental</h4>
+  <mat-form-field appearance="outline">
+    <mat-label>Shell</mat-label>
+    <mat-select formControlName="shell_id">
+      <mat-option *ngFor="let shell of shells$ | async" [value]="shell.id">{{ shell.name }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Out Time</mat-label>
+    <input matInput formControlName="out_time" [value]="rentalForm.get('out_time').value | date: 'short'">
+  </mat-form-field>
+
+  <div fxLayout="row" fxLayoutGap="10px">
+    <button mat-raised-button
+            [disabled]="!rentalForm.dirty"
+            fxFlex fxLayout="column"
+            (click)="createRental()"
+            color="primary">
+      Create
+    </button>
+    <button mat-raised-button
+            [disabled]="!rentalForm.dirty"
+            fxFlex fxLayout="column"
+            (click)="cancelCreate()"
+            color="warn">
+      Cancel
+    </button>
+  </div>
+</mat-card>

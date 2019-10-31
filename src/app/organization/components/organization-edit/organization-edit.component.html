@@ -1,0 +1,34 @@
+<mat-card *ngLet="current_org$ | async; let org"
+          [formGroup]="orgForm"
+          fxFlex fxLayout="column" >
+  <h4>Organization</h4>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Name</mat-label>
+    <input formControlName="name" placeholder="Name" matInput>
+    <mat-error></mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Abbreviation</mat-label>
+    <input formControlName="abbreviation" placeholder="Abbreviation" matInput>
+    <mat-error></mat-error>
+  </mat-form-field>
+
+  <div fxLayout="row" fxLayoutGap="10px">
+    <button mat-raised-button
+            [disabled]="!orgForm.dirty"
+            fxFlex fxLayout="column"
+            (click)="updateOrganization(org)"
+            color="primary">
+      Save
+    </button>
+    <button mat-raised-button
+            [disabled]="!orgForm.dirty"
+            fxFlex fxLayout="column"
+            (click)="resetForm(org)"
+            color="warn">
+      Cancel
+    </button>
+  </div>
+</mat-card>

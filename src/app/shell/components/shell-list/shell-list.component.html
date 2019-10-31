@@ -1,0 +1,20 @@
+<mat-card fxFlex fxLayout="column">
+  <div class="shell-list" fxFlex="1 1 auto" fxLayout="column">
+    <div *ngFor="let shell of shells$ | async" class="shell"
+         gdAreas="name buttons | type buttons" gdGap="10px" gdColumns="auto 150px">
+      <div gdArea="name">{{ shell.name }}</div>
+      <div gdArea="type">{{ ShellType[shell.type] }}</div>
+      <div fxLayoutAlign="flex-end" gdArea="buttons">
+        <button mat-icon-button>
+          <mat-icon>edit</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="filler"></div>
+
+    <button color="accent" mat-icon-button mat-raised-button>
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+</mat-card>
